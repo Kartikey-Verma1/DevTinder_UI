@@ -3,9 +3,11 @@ import { useState } from "react"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/constants";
 
 const Login = () => {
+    const [errorMessage, setErrorMessage] = useState("");    
     // password show logic
     const [passwordType, setPasswordType] = useState("password");
     const swapPasswordType = ()=>{
@@ -22,24 +24,28 @@ const Login = () => {
         e.preventDefault();
         try{
             const res = await axios.post(
-                "http://localhost:3000/authProfile/login",
+                `${BASE_URL}authProfile/login`,
                 {
                     email,
                     password
                 },
                 { withCredentials: true }
             );
-            dispatch(addUser(res.data.data));
+            dispatch(addUser(res.data?.data));
             setPassword("");
             setEmail("");
 
             return navigate("/");
         } catch (err) {
-            console.log(err);
+            const {status, statusText, data} = err?.response
+            if(status === 401){
+                setErrorMessage(data?.message);
+            }
+            else return navigate("/*", {state: {status, statusText, data}});
         }
     }
     return (
-        <form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 absolute left-1/2 top-1/2 -translate-1/2">
             <p className="text-xl font-bold mx-auto">Login</p>
             <fieldset className="fieldset">
                 <label className="label">Email</label>
@@ -73,13 +79,15 @@ const Login = () => {
                 </div>
                     <span className="validator-hint hidden my-0">Required</span>
             </fieldset>
-
+            <p className="text-rose-400">{errorMessage}</p>
             <button className="btn btn-info mt-4 font-bold" type="submit" onClick={apiCallLogin}>Login</button>
             <button className="btn btn-ghost mt-1" type="reset" 
                 onClick={()=>{
                     setEmail("")
                     setPassword("")
                 }}>Reset</button>
+            
+            <p className="m-auto">Don't you have an account till yet? <Link className="link link-primary">Signup</Link></p>
         </form>
     )
 }

@@ -1,11 +1,26 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ThemeController from "./ThemeController";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../utils/userSlice";
+import { BASE_URL } from "../utils/constants";
+import axios from "axios";
 
 const NavBar = () => {
     const dispatch = useDispatch();
-    const user = useSelector((store)=>store.user)
+    const navigate = useNavigate();
+    const user = useSelector((store)=>store.user);
+    const logout = async ()=>{
+        try{
+            dispatch(removeUser());
+            await axios.post(`${BASE_URL}authProfile/logout`,{}, {
+                withCredentials: true,
+            });
+            return navigate("/login");
+        } catch (err) {
+            const {status, statusText, data} = err?.response
+            return navigate("/*", {state: {status, statusText, data}});
+        }
+    }
     return (
         <div className="navbar bg-base-100 shadow-md">
             <div className="flex-1">
@@ -28,13 +43,13 @@ const NavBar = () => {
                                 tabIndex="-1"
                                 className="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-52 p-2 border">
                                 <li>
-                                <a className="justify-between">
+                                <Link to="/profile" className="justify-between">
                                     Profile
                                     <span className="badge">New</span>
-                                </a>
+                                </Link>
                                 </li>
                                 <li><a>Settings</a></li>
-                                <li><div onClick={()=>{dispatch(removeUser())}}>Logout</div></li>
+                                <li><div onClick={logout}>Logout</div></li>
                             </ul>
                         </div>
                     </div> : 
