@@ -12,17 +12,17 @@ const NavBar = () => {
     const logout = async ()=>{
         try{
             dispatch(removeUser());
+            navigate("/login");
             await axios.post(`${BASE_URL}authProfile/logout`,{}, {
                 withCredentials: true,
             });
-            return navigate("/login");
         } catch (err) {
             const {status, statusText, data} = err?.response
             return navigate("/*", {state: {status, statusText, data}});
         }
     }
     return (
-        <div className="navbar bg-base-100 shadow-md">
+        <div className="navbar bg-base-100 shadow-sm shadow-blue-200">
             <div className="flex-1">
                 <Link to="/" className="btn btn-ghost text-xl">DevTinder</Link>
             </div>
@@ -41,14 +41,15 @@ const NavBar = () => {
                             </div>
                             <ul
                                 tabIndex="-1"
-                                className="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-52 p-2 border">
+                                className="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-52 p-2 border border-gray-500">
                                 <li>
                                 <Link to="/profile" className="justify-between">
                                     Profile
                                     <span className="badge">New</span>
                                 </Link>
                                 </li>
-                                <li><a>Settings</a></li>
+                                <li><a>Connections</a></li>
+                                <li><a>Requests</a></li>
                                 <li><div onClick={logout}>Logout</div></li>
                             </ul>
                         </div>

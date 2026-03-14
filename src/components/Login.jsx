@@ -85,6 +85,7 @@ const Login = () => {
                 onClick={()=>{
                     setEmail("")
                     setPassword("")
+                    setErrorMessage("")
                 }}>Reset</button>
             
             <p className="m-auto">Don't you have an account till yet? <Link className="link link-primary">Signup</Link></p>
