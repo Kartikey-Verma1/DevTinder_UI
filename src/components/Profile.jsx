@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ShimmerProfile from "./ShimmerProfile";
 import { FaCakeCandles } from "react-icons/fa6";
+import { fetchUserData } from "../utils/fetchUserData";
 
 const Profile = () => {
     const [errorMessageName, setErrorMessageName] = useState("");
@@ -153,22 +154,14 @@ const Profile = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const fetchUserData = async ()=>{
-        try{
-            const fetchedData = await axios.get(`${BASE_URL}profile/view`,{withCredentials: true});
-            dispatch(addUser(fetchedData.data.data));
-            setData(fetchedData.data.data);
-            setFlagData(true);
-        } catch (err) {
-            const {status, statusText, data} = err?.response;
-            if(status === 401) return navigate("/login");
-            else return navigate("/*", {state : {status, statusText, data}});
-        }
-    }
-
     useEffect(()=>{
         if(!user){
-            fetchUserData();
+            (async () => {
+                const user = await fetchUserData(navigate);
+                dispatch(addUser(user));
+                setData(user);
+                setFlagData(true);
+            })();
         } else {
             setFlagData(true);
             setData(user);

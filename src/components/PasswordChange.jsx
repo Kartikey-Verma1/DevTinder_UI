@@ -1,7 +1,10 @@
 import axios from "axios";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { BASE_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../utils/userSlice";
+import { fetchUserData } from "../utils/fetchUserData";
 
 const PasswordChange = () => {
     const [oldPass, setOldPass] = useState("");
@@ -9,6 +12,18 @@ const PasswordChange = () => {
     const [confirmNewPass, setConfirmNewPass] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const user = useSelector((store)=>store.user);
+    
+    useEffect(()=>{
+        if(!user){
+            (async () => {
+                const user = await fetchUserData(navigate);
+                dispatch(addUser(user));
+            })();
+        }
+    }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
@@ -26,7 +41,7 @@ const PasswordChange = () => {
             setNewPass("");
             setConfirmNewPass("");
             setErrorMessage("");
-            navigate("/login");
+            navigate("/profile");
         } catch (err) {
             const {status, statusText, data} = err?.response;
             if(status == 422){
