@@ -22,7 +22,7 @@ const NavBar = () => {
         }
     }
     return (
-        <div className="navbar bg-base-100 shadow-sm shadow-blue-200">
+        <div className="navbar bg-base-100 shadow-[0_0_10px_rgba(147,197,253,0.3)]">
             <div className="flex-1">
                 <Link to="/" className="btn btn-ghost text-xl">DevTinder</Link>
             </div>
@@ -55,7 +55,7 @@ const NavBar = () => {
                         </div>
                     </div> : 
                     <div> 
-                        <Link to="/login">Login</Link> or Signup 
+                        <Link to="/login">Login</Link> or <Link to="/signup">Signup</Link>
                     </div>}
             </div>
         </div>

@@ -45,51 +45,53 @@ const Login = () => {
         }
     }
     return (
-        <form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 absolute left-1/2 top-1/2 -translate-1/2">
-            <p className="text-xl font-bold mx-auto">Login</p>
-            <fieldset className="fieldset">
-                <label className="label">Email</label>
-                <input 
-                    type="email" 
-                    className="input validator outline-0" 
-                    placeholder="Email" 
-                    required 
-                    value={email}
-                    onChange={(e)=>{setEmail(e.target.value)}}/>
-
-                <p className="validator-hint hidden my-0">Required</p>
-            </fieldset>
-
-            <fieldset className="fieldset">
-                <span className="label">Password</span>
-                <div className="input validator relative outline-0">
+        <div className="min-h-fit min-w-full">
+            <form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 my-7 mx-auto shadow-[0_0_12px_rgba(147,197,253,0.3)]">
+                <p className="text-xl font-bold mx-auto">Login</p>
+                <fieldset className="fieldset">
+                    <label className="label">Email</label>
                     <input 
-                        type={passwordType} 
-                        placeholder="Password" 
+                        type="email" 
+                        className="input validator outline-0" 
+                        placeholder="Email" 
                         required 
-                        value={password}
-                        onChange={(e)=>{setPassword(e.target.value)}}/>
+                        value={email}
+                        onChange={(e)=>{setEmail(e.target.value)}}/>
 
-                    <button 
-                        type="button"
-                        onClick={swapPasswordType}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-lg text-gray-400">
-                            {passwordType ==="password" ? <FaEye /> : <FaEyeSlash />}
-                    </button>
-                </div>
-                    <span className="validator-hint hidden my-0">Required</span>
-            </fieldset>
-            <p className="text-rose-400">{errorMessage}</p>
-            <button className="btn btn-info mt-4 font-bold" type="submit" onClick={apiCallLogin}>Login</button>
-            <button className="btn btn-ghost mt-1" type="reset" 
-                onClick={()=>{
-                    setEmail("")
-                    setPassword("")
-                    setErrorMessage("")
-                }}>Reset</button>
-            
-            <p className="m-auto">Don't you have an account till yet? <Link className="link link-primary">Signup</Link></p>
-        </form>
+                    <p className="validator-hint hidden my-0">Required</p>
+                </fieldset>
+
+                <fieldset className="fieldset">
+                    <span className="label">Password</span>
+                    <div className="input validator relative outline-0">
+                        <input 
+                            type={passwordType} 
+                            placeholder="Password" 
+                            required 
+                            value={password}
+                            onChange={(e)=>{setPassword(e.target.value)}}/>
+
+                        <button 
+                            type="button"
+                            onClick={swapPasswordType}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-lg text-gray-400">
+                                {passwordType ==="password" ? <FaEye /> : <FaEyeSlash />}
+                        </button>
+                    </div>
+                        <span className="validator-hint hidden my-0">Required</span>
+                </fieldset>
+                <p className="text-rose-400">{errorMessage}</p>
+                <button className="btn btn-info mt-4 font-bold" type="submit" onClick={apiCallLogin}>Login</button>
+                <button className="btn btn-ghost mt-1" type="reset" 
+                    onClick={()=>{
+                        setEmail("")
+                        setPassword("")
+                        setErrorMessage("")
+                    }}>Reset</button>
+                
+                <p className="m-auto">Don't you have an account till yet? <Link to="/signup" className="link link-primary">Signup</Link></p>
+            </form>
+        </div>
     )
 }
 
