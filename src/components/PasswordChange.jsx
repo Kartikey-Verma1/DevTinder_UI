@@ -61,7 +61,7 @@ const PasswordChange = () => {
     }
     return (
         <div className="min-w-full h-fit">
-            <form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 shadow-[0_0_12px_rgba(147,197,253,0.3)] my-10 mx-auto" onSubmit={handleSubmit}>
+            {user ? (<form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 shadow-[0_0_12px_rgba(147,197,253,0.3)] my-10 mx-auto" onSubmit={handleSubmit}>
                 <p className="text-xl font-bold mx-auto">Password Change</p>
                 <fieldset className="fieldset">
                     <label className="label">Old Password</label>
@@ -96,7 +96,8 @@ const PasswordChange = () => {
                 </label>
                 <p className="text-rose-400">{errorMessage}</p>
                 <button className="btn btn-neutral mt-4" type="submit">Submit</button>
-            </form>
+            </form>): 
+            <div className="rounded-box mx-auto my-7 w-xs h-86 skeleton shadow-[0_0_12px_rgba(147,197,253,0.3)]"></div>}
         </div>
     )
 }

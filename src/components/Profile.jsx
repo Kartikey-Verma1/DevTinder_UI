@@ -24,7 +24,7 @@ const Profile = () => {
     // making useState hooks for getting the value of the fields
     const [firstNameValue, setFirstNameValue] = useState("");
     const [lastNameValue, setLastNameValue] = useState("");
-    const [aboutValue, setAboutValue] = useState("");
+    const [aboutValue, setAboutValue] = useState("Hey there! I am on DevTinder.");
     const [skillsValue, setSkillsValue] = useState([]);
     const [newSkill, setNewSkill] = useState("");
     const [genderValue, setGenderValue] = useState("");
@@ -51,7 +51,8 @@ const Profile = () => {
                 setErrorMessageName("")
                 return navigate("/login");
             }
-            else return navigate("/*", {state: {status, statusText, data}});
+            console.log(err.response);
+            return navigate("/*", {state: {status, statusText, data}});
         }
     }
 
@@ -92,11 +93,11 @@ const Profile = () => {
             setErrorMessageAbout("");
             return;
         }
-        if(aboutValue.length > 100){
-            setErrorMessageAbout("Max number of letters allowed is 100");
+        if(aboutValue.length > 200){
+            setErrorMessageAbout("Max number of letters allowed is 200");
             return;
         }
-        const dataToPass = {about: aboutValue};
+        const dataToPass = {about: aboutValue || null};
         await editCall(dataToPass);
         setErrorMessageAbout("");
         setIsClickedAbout(false);
@@ -279,8 +280,8 @@ const Profile = () => {
                                             <FaTimes />
                                         </button>
                                     </p>
-                            ))}
-                            {skillsValue.length < 20 ?
+                                ))}
+                                {skillsValue.length < 20 ?
                                 <><label htmlFor="my_modal_6" className="btn max-h-min max-w-min mr-5 mt-2 p-1 px-3 rounded-md bg-base-300" onClick={()=>{setIsClickedSkills(true)}}><FaPlus/>Add</label>
 
                                 <input type="checkbox" checked={isClickedSkills} className="modal-toggle" />
@@ -310,13 +311,13 @@ const Profile = () => {
                                         </div>
                                     </div>
                                 </div></> : 
-                            <></>}
+                                <></>}
+                            </div>
                         </div>
-                        </div>
+                        {/* age and gender in one div */}
                         <div className="flex gap-3">
-                            {/* skills and gender in one div */}
-                            <div className="border border-gray-500 rounded-md p-3 bg-base-100 min-w-min flex-1/2">
                             {/* Gender div */}
+                            <div className="border border-gray-500 rounded-md p-3 bg-base-100 min-w-min flex-1/2">
                                 <div className="flex items-center">
                                     <p className="text-lg font-bold max-w-min">Gender</p>
                                     <div className="dropdown dropdown-center">
