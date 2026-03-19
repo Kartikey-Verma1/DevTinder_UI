@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { FaEdit, FaMars, FaVenus, FaGenderless, FaCheck, FaTimes, FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../utils/constants";
-import { addUser } from "../utils/userSlice";
+import { addUser, removeUser } from "../utils/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ShimmerProfile from "./ShimmerProfile";
@@ -50,6 +50,10 @@ const Profile = () => {
             if(status === 401){
                 setErrorMessageName("")
                 return navigate("/login");
+            }
+            if(status === 409 || status === 423){
+                alert(data.message);
+                return;
             }
             console.log(err.response);
             return navigate("/*", {state: {status, statusText, data}});
@@ -146,6 +150,27 @@ const Profile = () => {
         setErrorMessageAge("");
         setIsClickedAge(false);
         return;
+    }
+    const handleDelete = async (e) => {
+        try{
+            e.preventDefault();
+            await axios.delete(`${BASE_URL}profile/deleteAccount`, {withCredentials: true});
+            alert(`${user.firstName} ${user.lastName} your account is deleted!`);
+            dispatch(removeUser());
+            return navigate("/login");
+        } catch(err){
+            const {status, statusText, data} = err?.response
+            if(status === 401){
+                setErrorMessageName("")
+                return navigate("/login");
+            }
+            if(status === 409 || status === 423){
+                alert(data.message);
+                return;
+            }
+            console.log(err.response);
+            return navigate("/*", {state: {status, statusText, data}});
+        }
     }
 
     // logic to fetch data and rendering it, first checking that if it is present than if present than adding it to redux store otherwise fetching data than adding to store.
@@ -389,8 +414,33 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="text-right mt-2">
+                    {/* password change and delete account in one div */}
+                    <div className="mt-2 flex justify-end gap-3">
+                        {/* password change */}
                         <Link to="/passwordchange"><button className="btn btn-info max-w-40" type="button">Change Password</button></Link>
+                        {/* delete account */}
+                        <div>
+                            <button className="btn btn-error" onClick={()=>document.getElementById('my_modal_3').showModal()}>Delete Account</button>
+                            <dialog id="my_modal_3" className="modal">
+                                <div className="modal-box bg-base-100/70 backdrop-blur-sm">
+                                    <form method="dialog">
+                                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                    </form>
+                                    <h3 className="font-bold text-lg">Are You Sure?</h3>
+                                    <p className="py-4">Do you want to delete your account? Type "<span className="font-bold">delete account</span>"</p>
+                                    <form onSubmit={handleDelete}>
+                                        <input className="input validator outline-0 w-3xs" 
+                                            type="text" 
+                                            required
+                                            pattern="delete account"/>
+                                        <p className="validator-hint">Required <br /> Must match exactly</p>
+                                        <div className="text-right">
+                                            <button className="btn btn-error">Delete</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </dialog>
+                        </div>
                     </div>
                     
                 </div>
