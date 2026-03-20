@@ -38,7 +38,7 @@ const Login = () => {
             setEmail("");
 
             (async function () {
-                const requests = await fetchRequestData();
+                const requests = await fetchRequestData(navigate);
                 dispatch(addRequests(requests));
             })();
             return navigate("/");

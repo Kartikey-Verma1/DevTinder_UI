@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom"
+import { Outlet, useSearchParams } from "react-router-dom"
 import NavBar from "./NavBar"
 import Footer from "./Footer"
 import Request from "./Request"
@@ -7,9 +7,12 @@ import { useState } from "react"
 
 const Body = () => {
     const [drawerType, setDrawerType] = useState("");
+
     return (
         <div className="drawer drawer-end">
-            <input id="my_drawer" type="checkbox" className="drawer-toggle"/>
+            <input  className="drawer-toggle"
+                id="my_drawer" 
+                type="checkbox"/>
             <div className="min-h-screen flex flex-col drawer-content">
                 <NavBar setDrawerType={setDrawerType}/>
                 <div className="flex-1 relative">
@@ -17,8 +20,8 @@ const Body = () => {
                 </div>
                 <Footer />
             </div>
-            {drawerType === "requests" && <Request />}
-            {drawerType === "connections" && <Connections />}
+            {drawerType === "requests" && <Request/>}
+            {drawerType === "connections" && <Connections/>}
         </div>
     )
 }
