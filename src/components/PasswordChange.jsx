@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { BASE_URL } from "../utils/constants";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { fetchUserData } from "../utils/fetchUserData";
+import { fetchUserData } from "../utils/fetchData.js";
 
 const PasswordChange = () => {
     const [oldPass, setOldPass] = useState("");
@@ -61,6 +61,9 @@ const PasswordChange = () => {
     }
     return (
         <div className="min-w-full h-fit">
+            <div className="mt-5 mx-8">
+                <Link to="/profile" className="rounded-full px-3.5 py-2 hover:bg-base-200">❮</Link>
+            </div>
             {user ? (<form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 shadow-[0_0_12px_rgba(147,197,253,0.3)] my-10 mx-auto" onSubmit={handleSubmit}>
                 <p className="text-xl font-bold mx-auto">Password Change</p>
                 <fieldset className="fieldset">
@@ -81,8 +84,9 @@ const PasswordChange = () => {
                         placeholder="New Password" 
                         value={newPass} 
                         required 
+                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$"
                         onChange={(e)=>{setNewPass(e.target.value)}}/>
-                    <span className="validator-hint hidden m-0">Required</span>
+                    <span className="validator-hint hidden m-0">Must include uppercase, lowercase, number, and special character</span>
                 </label>
                 <label className="fieldset">
                     <span className="label">Confirm New Password</span>

@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
+import { addRequests } from "../utils/requestsSlice";
+import { fetchRequestData } from "../utils/fetchData";
 
 const Login = () => {
     const [errorMessage, setErrorMessage] = useState("");    
@@ -35,6 +37,10 @@ const Login = () => {
             setPassword("");
             setEmail("");
 
+            (async function () {
+                const requests = await fetchRequestData();
+                dispatch(addRequests(requests));
+            })();
             return navigate("/");
         } catch (err) {
             const {status, statusText, data} = err?.response
@@ -84,9 +90,9 @@ const Login = () => {
                 <button className="btn btn-info mt-4 font-bold" type="submit" onClick={apiCallLogin}>Login</button>
                 <button className="btn btn-ghost mt-1" type="reset" 
                     onClick={()=>{
-                        setEmail("")
-                        setPassword("")
-                        setErrorMessage("")
+                        setEmail("");
+                        setPassword("");
+                        setErrorMessage("");
                     }}>Reset</button>
                 
                 <p className="m-auto">Don't you have an account till yet? <Link to="/signup" className="link link-primary">Signup</Link></p>

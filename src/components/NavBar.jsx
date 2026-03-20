@@ -5,7 +5,7 @@ import { removeUser } from "../utils/userSlice";
 import { BASE_URL } from "../utils/constants";
 import axios from "axios";
 
-const NavBar = () => {
+const NavBar = ({setDrawerType}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector((store)=>store.user);
@@ -34,9 +34,9 @@ const NavBar = () => {
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full">
-                                <img
-                                    alt="user photo"
-                                    src={user.photourl} />
+                                    <img
+                                        alt="user photo"
+                                        src={user.photourl} />
                                 </div>
                             </div>
                             <ul
@@ -45,11 +45,14 @@ const NavBar = () => {
                                 <li>
                                 <Link to="/profile" className="justify-between">
                                     Profile
-                                    <span className="badge">New</span>
                                 </Link>
                                 </li>
-                                <li><a>Connections</a></li>
-                                <li><a>Requests</a></li>
+                                <li onClick={()=>{setDrawerType("connections")}}>
+                                    <label htmlFor="my_drawer">Connections</label>
+                                </li>
+                                <li onClick={()=>{setDrawerType("requests")}}>
+                                    <label htmlFor="my_drawer">Requests</label>
+                                </li>
                                 <li><div onClick={logout}>Logout</div></li>
                             </ul>
                         </div>

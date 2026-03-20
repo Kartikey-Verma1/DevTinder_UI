@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ShimmerProfile from "./ShimmerProfile";
 import { FaCakeCandles } from "react-icons/fa6";
-import { fetchUserData } from "../utils/fetchUserData";
+import { fetchUserData } from "../utils/fetchData";
 
 const Profile = () => {
     const [errorMessageName, setErrorMessageName] = useState("");

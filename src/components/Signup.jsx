@@ -17,7 +17,7 @@ const Signup = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState(0);
-    const [gender, setGender] = useState("");
+    const [gender, setGender] = useState("male");
     const [newSkill, setNewSkill] = useState("");
     const [skills, setSkills] = useState([]);
     const [about, setAbout] = useState("Hey there! I am on DevTinder.");

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { useEffect } from "react";
-import { fetchUserData } from "../utils/fetchUserData";
+import { fetchUserData } from "../utils/fetchData.js";
 
 const Feed = () => {
     const navigate = useNavigate();
