@@ -1,12 +1,12 @@
 import axios from "axios";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
 import { addRequests } from "../utils/requestsSlice";
-import { fetchRequestData } from "../utils/fetchData";
+import { fetchRequestData, fetchUserData } from "../utils/fetchData";
 
 const Login = () => {
     const [errorMessage, setErrorMessage] = useState("");    
@@ -38,8 +38,14 @@ const Login = () => {
             setEmail("");
 
             (async function () {
-                const requests = await fetchRequestData(navigate);
-                dispatch(addRequests(requests));
+                try{
+                    const requests = await fetchRequestData(navigate);
+                    dispatch(addRequests(requests));
+                } catch (err){
+                    const {status, statusText, data} = err?.response
+                    if(status === 401) return;
+                    else return navigate("/*", {state: {status, statusText, data}});
+                }
             })();
             return navigate("/");
         } catch (err) {
@@ -50,6 +56,25 @@ const Login = () => {
             else return navigate("/*", {state: {status, statusText, data}});
         }
     }
+    const user = useSelector((store)=>store.user);
+    useEffect(()=>{
+        if(user){
+            navigate("/");
+        }
+        else {
+            (async function(){
+                try{
+                    const fetchedData = await fetchUserData();
+                    dispatch(addUser(fetchedData));
+                    navigate("/")
+                } catch (err){
+                    const {status, statusText, data} = err?.response
+                    if(status === 401) return;
+                    else return navigate("/*", {state: {status, statusText, data}});
+                }
+            })();
+        }
+    },[]);
     return (
         <div className="min-h-fit min-w-full">
             <form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 my-7 mx-auto shadow-[0_0_12px_rgba(147,197,253,0.3)]">

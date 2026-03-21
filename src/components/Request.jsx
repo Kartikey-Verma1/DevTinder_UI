@@ -16,9 +16,15 @@ const Request = () => {
     useEffect(()=>{
         if(!requests){
             (async function () {
-                const requests = await fetchRequestData(navigate);
-                dispatch(addRequests(requests));
-                setPendingRequests(requests);
+                try{
+                    const requests = await fetchRequestData();
+                    dispatch(addRequests(requests));
+                    setPendingRequests(requests);
+                } catch (err){
+                    const {status, statusText, data} = err?.response
+                    if(status === 401) return navigate("/login");
+                    else return navigate("/*", {state: {status, statusText, data}});
+                }
             })();
         } else {
             setPendingRequests(requests);
@@ -50,8 +56,14 @@ const Request = () => {
             dispatch(addRequests(newpending));
 
             if(connections === null){
-                const fetchedConnections = await fetchConnectionData(navigate);
-                dispatch(addConnections(fetchedConnections));
+                try{
+                    const fetchedConnections = await fetchConnectionData();
+                    dispatch(addConnections(fetchedConnections));
+                } catch (err){
+                    const {status, statusText, data} = err?.response
+                    if(status === 401) return navigate("/login");
+                    else return navigate("/*", {state: {status, statusText, data}});
+                }
             } else {
                 const newconnection = [...(connections || []), acceptedUser];
                 dispatch(addConnections(newconnection));

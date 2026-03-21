@@ -13,9 +13,15 @@ const Connections = () => {
     useEffect(()=>{
         if(!connections){
             (async function (){
-                const fetchedData = await fetchConnectionData(navigate);
-                dispatch(addConnections(fetchedData));
-                setConnectionList(fetchedData);
+                try{
+                    const fetchedData = await fetchConnectionData();
+                    dispatch(addConnections(fetchedData));
+                    setConnectionList(fetchedData);
+                } catch (err){
+                    const {status, statusText, data} = err?.response
+                    if(status === 401) return navigate("/login");
+                    else return navigate("/*", {state: {status, statusText, data}});
+                }
             })();
         }
         else {

@@ -183,10 +183,16 @@ const Profile = () => {
     useEffect(()=>{
         if(!user){
             (async () => {
-                const user = await fetchUserData(navigate);
-                dispatch(addUser(user));
-                setData(user);
-                setFlagData(true);
+                try{
+                    const user = await fetchUserData();
+                    dispatch(addUser(user));
+                    setData(user);
+                    setFlagData(true);
+                } catch (err) {
+                    const {status, statusText, data} = err?.response
+                    if(status === 401) return navigate("/login");
+                    else return navigate("/*", {state: {status, statusText, data}});
+                }
             })();
         } else {
             setFlagData(true);
