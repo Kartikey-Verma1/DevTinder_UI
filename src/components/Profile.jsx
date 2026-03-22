@@ -315,7 +315,10 @@ const Profile = () => {
                                 {skillsValue.length < 20 ?
                                 <><label htmlFor="my_modal_6" className="btn max-h-min max-w-min mr-5 mt-2 p-1 px-3 rounded-md bg-base-300" onClick={()=>{setIsClickedSkills(true)}}><FaPlus/>Add</label>
 
-                                <input type="checkbox" checked={isClickedSkills} className="modal-toggle" />
+                                <input className="modal-toggle" 
+                                    type="checkbox" 
+                                    checked={isClickedSkills} 
+                                    readOnly/>
                                 <div className="modal " role="dialog"onKeyDown={(e)=>{
                                         if(e.key == "Enter") handleSkillsAdd(e);
                                     }}>

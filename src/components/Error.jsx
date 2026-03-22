@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom"
 const Error = ({error = null}) => {
     const location = useLocation();
     const apiError = location?.state;
+    console.log(apiError);
+    console.log(error);
     const {status, statusText, data} = apiError || error || {
         status: 500,
         statusText: "Unknown Error",
