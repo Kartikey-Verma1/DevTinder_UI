@@ -228,6 +228,7 @@ const Profile = () => {
                                     <fieldset>
                                         <input className="input validator outline-0" 
                                             type="text" 
+                                            placeholder="First Name"
                                             required
                                             value={firstNameValue} 
                                             onChange={(e)=>{setFirstNameValue(e.target.value)}}/>
@@ -235,6 +236,7 @@ const Profile = () => {
                                     <fieldset>
                                         <input className="input validator outline-0" 
                                             type="text" 
+                                            placeholder="Last Name"
                                             value={lastNameValue} 
                                             onChange={(e)=>{setLastNameValue(e.target.value)}}/>
                                     </fieldset>
