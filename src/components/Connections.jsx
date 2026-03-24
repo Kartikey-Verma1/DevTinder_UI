@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConnectionData } from "../utils/fetchData";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { addConnections } from "../utils/connectionsSlice";
 
 const Connections = () => {
@@ -46,20 +46,21 @@ const Connections = () => {
                         connectionList.map((element, index)=>{
                             const {_id, photourl, firstName, lastName} = element;
                             return (
-                            <li
-                              key={_id}>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-10 rounded-full overflow-hidden max-h-fit">
-                                            <img
-                                                alt="user photo"
-                                                src={photourl} />
+                            <Link to={`/requested/profile/view/${_id}`} key={_id}>
+                                <li>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-10 rounded-full overflow-hidden max-h-fit">
+                                                <img
+                                                    alt="user photo"
+                                                    src={photourl} />
+                                            </div>
+                                            <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
                                         </div>
-                                        <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
+                                        {<button className="cursor-pointer">❯</button>}
                                     </div>
-                                    {<button className="cursor-pointer">❯</button>}
-                                </div>
-                            </li>)
+                                </li>
+                            </Link>)
                         }) :
                         <div className="min-h-full min-w-full text-center">
                             <p>No connection found!☹️</p>

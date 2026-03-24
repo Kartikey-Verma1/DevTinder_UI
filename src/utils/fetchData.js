@@ -22,3 +22,15 @@ export const fetchConnectionData = async (navigate) => {
     });
     return connections.data?.data;
 }
+
+export const fetchReject = async (_id)=>{
+    await axios.post(`${BASE_URL}connectionRequest/review/rejected/${_id}`, {}, {
+        withCredentials: true
+    });
+}
+
+export const fetchAccept = async (_id)=>{
+    await axios.post(`${BASE_URL}connectionRequest/review/accepted/${_id}`, {}, {
+        withCredentials: true
+    });
+}

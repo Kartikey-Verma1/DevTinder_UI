@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../utils/userSlice";
 import { BASE_URL } from "../utils/constants";
 import axios from "axios";
+import { removeRequests } from "../utils/requestsSlice";
+import { removeConnections } from "../utils/connectionsSlice";
 
 const NavBar = ({setDrawerType}) => {
     const dispatch = useDispatch();
@@ -12,6 +14,8 @@ const NavBar = ({setDrawerType}) => {
     const logout = async ()=>{
         try{
             dispatch(removeUser());
+            dispatch(removeRequests());
+            dispatch(removeConnections());
             navigate("/login");
             await axios.post(`${BASE_URL}authProfile/logout`,{}, {
                 withCredentials: true,

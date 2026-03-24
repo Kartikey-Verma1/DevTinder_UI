@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addRequests } from "../utils/requestsSlice";
-import { fetchConnectionData, fetchRequestData } from "../utils/fetchData";
-import { useNavigate } from "react-router-dom";
+import { fetchAccept, fetchConnectionData, fetchReject, fetchRequestData } from "../utils/fetchData";
+import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
-import axios from "axios";
 import { addConnections } from "../utils/connectionsSlice";
 
 const Request = () => {
@@ -29,11 +28,11 @@ const Request = () => {
         } else {
             setPendingRequests(requests);
         }
-    });
+    },[requests]);
 
     const handleReject = async (index, _id)=>{
         try{
-            await axios.post(`${BASE_URL}connectionRequest/review/rejected/${_id}`, {}, {withCredentials: true});
+            await fetchReject(_id);
             const newpending = requests.filter((e, i)=>(i != index));
             setPendingRequests(newpending);
             dispatch(addRequests(newpending));
@@ -46,7 +45,7 @@ const Request = () => {
     }
     const handleAccept = async (index, _id)=>{
         try{
-            await axios.post(`${BASE_URL}connectionRequest/review/accepted/${_id}`, {}, {withCredentials: true});
+            await fetchAccept(_id);
             const newpending = requests.filter((e, i)=>(i !== index));
             setPendingRequests(newpending);
             
@@ -92,23 +91,34 @@ const Request = () => {
                         pendingRequest.map((element, index)=>{
                             const {_id, photourl, firstName, lastName} = element?.senderId;
                             return (
-                            <li
-                              key={_id}>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-10 rounded-full overflow-hidden max-h-fit">
-                                            <img
-                                                alt="user photo"
-                                                src={photourl} />
+                            <Link to={`/requested/profile/view/${_id}`} key={_id}>
+                                <li>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-10 rounded-full overflow-hidden max-h-fit">
+                                                <img
+                                                    alt="user photo"
+                                                    src={photourl} />
+                                            </div>
+                                            <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
                                         </div>
-                                        <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
+                                        <div className="flex items-center max-h-min max-w-fit gap-x-2">
+                                            <button className="max-h-fit btn btn-error" onClick={(e)=>{
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleReject(index, _id)}}>
+                                                    Reject
+                                            </button>
+                                            <button className="max-h-fit btn btn-success" onClick={(e)=>{
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleAccept(index, _id)}}>
+                                                    Accept
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center max-h-min max-w-fit gap-x-2">
-                                        <button className="max-h-fit btn btn-error" onClick={()=>{handleReject(index, _id)}}>Reject</button>
-                                        <button className="max-h-fit btn btn-success" onClick={()=>{handleAccept(index, _id)}}>Accept</button>
-                                    </div>
-                                </div>
-                            </li>)
+                                </li>
+                            </Link>)
                         }) :
                         <div className="min-h-full min-w-full text-center">
                             <p>No request found!☹️</p>
