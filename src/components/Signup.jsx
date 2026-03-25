@@ -1,8 +1,7 @@
-import axios from "axios";
 import { useState } from "react";
 import { FaCheck, FaEye, FaEyeSlash, FaPlus, FaTimes} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../utils/constants";
+import { fetchAddProfile } from "../utils/fetchData";
 
 const Signup = () => {
     const [isClickedSkills, setIsClickedSkills] = useState(false);
@@ -77,21 +76,12 @@ const Signup = () => {
             return;
         }
         try{
-            const responseData = await axios.post(`${BASE_URL}authProfile/signup`, {
-                firstName,
-                lastName,
-                email,
-                password,
-                skills,
-                age,
-                gender,
-                about
-            }, {withCredentials: true});
+            const responseData = await fetchAddProfile({firstName, lastName, email, password, age, gender, skills, about});
 
-            alert(responseData.data.message);
+            alert(responseData.message);
             return navigate("/login");
         } catch (err) {
-            const {status, statusText, data} = err?.response
+            const {status, statusText, data} = err?.response;
             if(status === 423 || status === 409){
                 alert(data?.message);
                 return;

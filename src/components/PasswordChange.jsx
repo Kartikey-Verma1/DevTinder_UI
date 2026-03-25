@@ -1,10 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react"
-import { BASE_URL } from "../utils/constants";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { fetchUserData } from "../utils/fetchData.js";
+import { fetchChangePassword, fetchUserData } from "../utils/fetchData.js";
 
 const PasswordChange = () => {
     const [oldPass, setOldPass] = useState("");
@@ -37,12 +35,12 @@ const PasswordChange = () => {
                 setErrorMessage("Confirm password should be same as new password");
                 return;
             }
-            const data = await axios.patch(`${BASE_URL}profile/changePassword`, {
-                password: oldPass,
-                newPassword: newPass,
+            const fetchedData = await fetchChangePassword({
+                password: oldPass, 
+                newPassword: newPass, 
                 confirmNewPassword: confirmNewPass
-            }, {withCredentials: true});
-            alert(data.data.message);
+            });
+            alert(fetchedData.message);
             setOldPass("");
             setNewPass("");
             setConfirmNewPass("");

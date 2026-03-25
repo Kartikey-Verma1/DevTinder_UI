@@ -2,10 +2,9 @@ import { Link, useNavigate } from "react-router-dom";
 import ThemeController from "./ThemeController";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../utils/userSlice";
-import { BASE_URL } from "../utils/constants";
-import axios from "axios";
 import { removeRequests } from "../utils/requestsSlice";
 import { removeConnections } from "../utils/connectionsSlice";
+import { fetchLogout } from "../utils/fetchData";
 
 const NavBar = ({setDrawerType}) => {
     const dispatch = useDispatch();
@@ -17,9 +16,7 @@ const NavBar = ({setDrawerType}) => {
             dispatch(removeRequests());
             dispatch(removeConnections());
             navigate("/login");
-            await axios.post(`${BASE_URL}authProfile/logout`,{}, {
-                withCredentials: true,
-            });
+            await fetchLogout();
         } catch (err) {
             const {status, statusText, data} = err?.response
             return navigate("/*", {state: {status, statusText, data}});

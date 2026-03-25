@@ -1,13 +1,11 @@
 import { useDispatch, useSelector } from "react-redux"
 import { FaEdit, FaMars, FaVenus, FaGenderless, FaCheck, FaTimes, FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../utils/constants";
 import { addUser, removeUser } from "../utils/userSlice";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import ShimmerProfile from "./ShimmerProfile";
 import { FaCakeCandles } from "react-icons/fa6";
-import { fetchUserData } from "../utils/fetchData";
+import { fetchDeleteProfile, fetchEdit, fetchUserData } from "../utils/fetchData";
 
 const Profile = () => {
     const [errorMessageName, setErrorMessageName] = useState("");
@@ -41,10 +39,8 @@ const Profile = () => {
 
     const editCall = async (dataToPass)=>{
         try{
-            const changedData = await axios.patch(`${BASE_URL}profile/edit`, 
-                dataToPass, 
-                {withCredentials: true});
-            dispatch(addUser(changedData.data.data));
+            const changedData = await fetchEdit(dataToPass);
+            dispatch(addUser(changedData));
         } catch(err){
             const {status, statusText, data} = err?.response
             if(status === 401){
@@ -154,7 +150,7 @@ const Profile = () => {
     const handleDelete = async (e) => {
         try{
             e.preventDefault();
-            await axios.delete(`${BASE_URL}profile/deleteAccount`, {withCredentials: true});
+            await fetchDeleteProfile();
             alert(`${user.firstName} ${user.lastName} your account is deleted!`);
             dispatch(removeUser());
             return navigate("/login");

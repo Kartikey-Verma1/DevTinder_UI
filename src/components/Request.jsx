@@ -2,8 +2,7 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addRequests } from "../utils/requestsSlice";
 import { fetchAccept, fetchConnectionData, fetchReject, fetchRequestData } from "../utils/fetchData";
-import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
 import { addConnections } from "../utils/connectionsSlice";
 
 const Request = () => {
@@ -91,10 +90,12 @@ const Request = () => {
                         pendingRequest.map((element, index)=>{
                             const {_id, photourl, firstName, lastName} = element?.senderId;
                             return (
-                            <Link to={`/requested/profile/view/${_id}`} key={_id}>
-                                <li>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
+                            <li key={_id}>
+                                <div className="flex items-center justify-between">
+                                    <label className="drawer-overlay cursor-pointer"
+                                        htmlFor="my_drawer" 
+                                        aria-label="close sidebar" >
+                                        <div className="flex items-center gap-2" onClick={()=>{navigate(`/requested/profile/view/${_id}`)}}>
                                             <div className="w-10 rounded-full overflow-hidden max-h-fit">
                                                 <img
                                                     alt="user photo"
@@ -102,23 +103,23 @@ const Request = () => {
                                             </div>
                                             <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
                                         </div>
-                                        <div className="flex items-center max-h-min max-w-fit gap-x-2">
-                                            <button className="max-h-fit btn btn-error" onClick={(e)=>{
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                handleReject(index, _id)}}>
-                                                    Reject
-                                            </button>
-                                            <button className="max-h-fit btn btn-success" onClick={(e)=>{
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                handleAccept(index, _id)}}>
-                                                    Accept
-                                            </button>
-                                        </div>
+                                    </label>
+                                    <div className="flex items-center max-h-min max-w-fit gap-x-2">
+                                        <button className="max-h-fit btn btn-error" onClick={(e)=>{
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleReject(index, _id)}}>
+                                                Reject
+                                        </button>
+                                        <button className="max-h-fit btn btn-success" onClick={(e)=>{
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleAccept(index, _id)}}>
+                                                Accept
+                                        </button>
                                     </div>
-                                </li>
-                            </Link>)
+                                </div>
+                            </li>)
                         }) :
                         <div className="min-h-full min-w-full text-center">
                             <p>No request found!☹️</p>

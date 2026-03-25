@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConnectionData } from "../utils/fetchData";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { addConnections } from "../utils/connectionsSlice";
 
 const Connections = () => {
@@ -46,8 +46,12 @@ const Connections = () => {
                         connectionList.map((element, index)=>{
                             const {_id, photourl, firstName, lastName} = element;
                             return (
-                            <Link to={`/requested/profile/view/${_id}`} key={_id}>
-                                <li>
+                            <label className="drawer-overlay" 
+                            htmlFor="my_drawer"
+                            aria-label="close sidebar">
+                                <li 
+                                onClick={()=>{navigate(`/requested/profile/view/${_id}`)}} 
+                                key={_id}>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <div className="w-10 rounded-full overflow-hidden max-h-fit">
@@ -60,7 +64,7 @@ const Connections = () => {
                                         {<button className="cursor-pointer">❯</button>}
                                     </div>
                                 </li>
-                            </Link>)
+                            </label>)
                         }) :
                         <div className="min-h-full min-w-full text-center">
                             <p>No connection found!☹️</p>

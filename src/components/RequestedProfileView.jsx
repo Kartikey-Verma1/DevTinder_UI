@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../utils/constants";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaGenderless, FaMars, FaVenus } from "react-icons/fa";
 import { FaCakeCandles } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserData } from "../utils/fetchData";
+import { fetchRequestedUser, fetchUserData } from "../utils/fetchData";
 import { addUser } from "../utils/userSlice";
 const RequestedProfileView = () => {
     const user = useSelector((store)=>store.user);
@@ -16,8 +14,8 @@ const RequestedProfileView = () => {
 
     const requestedUser = async ()=>{
         try{
-            const fetchedData = await axios.get(`${BASE_URL}user/profile/view/${id}`, {withCredentials: true});
-            setRequestedData(fetchedData?.data?.data);
+            const fetchedData = await fetchRequestedUser(id);
+            setRequestedData(fetchedData);
         } catch (err) {
             const {status, statusText, data} = err?.response
             if(status === 401) return navigate("/login");

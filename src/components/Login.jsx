@@ -1,12 +1,10 @@
-import axios from "axios";
 import { useEffect, useState } from "react"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL } from "../utils/constants";
 import { addRequests } from "../utils/requestsSlice";
-import { fetchRequestData, fetchUserData } from "../utils/fetchData";
+import { fetchLogin, fetchRequestData, fetchUserData } from "../utils/fetchData";
 
 const Login = () => {
     const [errorMessage, setErrorMessage] = useState("");    
@@ -22,18 +20,12 @@ const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("kartik.v7391@gmail.com");
     const [password, setPassword] = useState("Kartikeyverma@13022006");
+
     const apiCallLogin = async (e)=>{
         e.preventDefault();
         try{
-            const res = await axios.post(
-                `${BASE_URL}authProfile/login`,
-                {
-                    email,
-                    password
-                },
-                { withCredentials: true }
-            );
-            dispatch(addUser(res.data?.data));
+            const res = await fetchLogin({email, password});
+            dispatch(addUser(res));
             setPassword("");
             setEmail("");
 
