@@ -197,60 +197,77 @@ const Profile = () => {
     }, []);
 
     return (
-        <div>
-            {flagData ? <div className="card lg:card-side bg-base-200 shadow-[0_0_12px_rgba(147,197,253,0.3)] m-3">
-
-                {/* Photo */}
-                <figure>
-                    <img className="max-w-96"
-                    src={user.photourl}
-                    alt="Album" />
-                </figure>
-
+        <div className="min-w-full max-h-fit p-5 pt-10">
+            {flagData ? 
+            <div className="card lg:card-side bg-base-200 shadow-[0_0_12px_rgba(147,197,253,0.3)] max-w-3xl mx-auto">
                 <div className="card-body justify-between">
                     <div className="flex flex-col gap-3">
-
-                        {/* Name */}
-                        {!isClickedName ?
-                            // showing name
-                            (<p className="card-title text-2xl my-4">{`${firstNameValue} ${lastNameValue}`} 
-                                <button className="cursor-pointer text-xs mx-4" onClick={()=>setIsClickedName(true)}>
-                                    <FaEdit />
-                                </button>
-                            </p>) :
-                            // editing name
-                            (<div>
-                                <form className="card-title text-2xl mt-4" onSubmit={handleName}>
-                                    <fieldset>
-                                        <input className="input validator outline-0" 
-                                            type="text" 
-                                            placeholder="First Name"
-                                            required
-                                            value={firstNameValue} 
-                                            onChange={(e)=>{setFirstNameValue(e.target.value)}}/>
-                                    </fieldset>
-                                    <fieldset>
-                                        <input className="input validator outline-0" 
-                                            type="text" 
-                                            placeholder="Last Name"
-                                            value={lastNameValue} 
-                                            onChange={(e)=>{setLastNameValue(e.target.value)}}/>
-                                    </fieldset>
-                                    <button className="text-sm cursor-pointer btn btn-sm btn-ghost" 
-                                        value="cancel"
-                                        type="button"
-                                        onClick={handleName}>
-                                        <FaTimes />
+                        <div className="flex gap-7 items-center mb-3">
+                            <label className="avatar"
+                                htmlFor="my_modal_photo">
+                                <figure className="max-w-30 min-w-17 rounded-full cursor-pointer">
+                                    <img
+                                    src={user.photourl}
+                                    alt="Profile" />
+                                </figure>
+                            </label>
+                            <input type="checkbox" id="my_modal_photo" className="modal-toggle" />
+                            <div className="modal" role="dialog">
+                                <div className="modal-box">
+                                    <div>
+                                        <img className="aspect-16/15 object-cover"
+                                            src={user.photourl}
+                                            alt="profile photo" />
+                                    </div>
+                                    <div className="modal-action">
+                                        <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full cursor-pointer hover:bg-base-200 absolute right-1 top-1">✕</label>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Name */}
+                            {!isClickedName ?
+                                // showing name
+                                (<p className="card-title text-2xl my-4">{`${firstNameValue} ${lastNameValue}`} 
+                                    <button className="cursor-pointer text-xs mx-4" onClick={()=>setIsClickedName(true)}>
+                                        <FaEdit />
                                     </button>
-                                    <button className="text-sm cursor-pointer btn btn-sm btn-ghost" 
-                                        value="save"
-                                        type="submit">
-                                        <FaCheck />
-                                    </button>
-                                </form>
-                                <p className="text-rose-400">{errorMessageName}</p>
-                            </div>)
-                        }
+                                </p>) :
+                                // editing name
+                                (<div>
+                                    <form className="card-title text-2xl mt-4 flex flex-wrap" onSubmit={handleName}>
+                                        <div className="flex gap-3">
+                                            <fieldset>
+                                                <input className="input validator outline-0" 
+                                                    type="text" 
+                                                    placeholder="First Name"
+                                                    required
+                                                    value={firstNameValue} 
+                                                    onChange={(e)=>{setFirstNameValue(e.target.value)}}/>
+                                            </fieldset>
+                                            <fieldset>
+                                                <input className="input validator outline-0" 
+                                                    type="text" 
+                                                    placeholder="Last Name"
+                                                    value={lastNameValue} 
+                                                    onChange={(e)=>{setLastNameValue(e.target.value)}}/>
+                                            </fieldset>
+                                        </div>
+                                        <button className="text-sm cursor-pointer btn btn-sm btn-ghost" 
+                                            value="cancel"
+                                            type="button"
+                                            onClick={handleName}>
+                                            <FaTimes />
+                                        </button>
+                                        <button className="text-sm cursor-pointer btn btn-sm btn-ghost" 
+                                            value="save"
+                                            type="submit">
+                                            <FaCheck />
+                                        </button>
+                                    </form>
+                                    <p className="text-rose-400">{errorMessageName}</p>
+                                </div>)
+                            }
+                        </div>
 
                         {/* About */}
                         <div className="border border-gray-500 rounded-md p-3 bg-base-100">
@@ -349,12 +366,12 @@ const Profile = () => {
                         {/* age and gender in one div */}
                         <div className="flex gap-3">
                             {/* Gender div */}
-                            <div className="border border-gray-500 rounded-md p-3 bg-base-100 min-w-min flex-1/2">
+                            <div className="border border-gray-500 rounded-md p-3 bg-base-100 flex-1/2">
                                 <div className="flex items-center">
-                                    <p className="text-lg font-bold max-w-min">Gender</p>
+                                    <p className="text-lg font-bold max-w-fit">Gender</p>
                                     <div className="dropdown dropdown-center">
-                                        <div tabIndex={0} role="button" className="mx-4 cursor-pointer">
-                                            <div className="w-10 rounded-full text-xs">
+                                        <div tabIndex={0} role="button" className="ml-3.5 cursor-pointer">
+                                            <div className="rounded-full text-xs">
                                                 <FaEdit />
                                             </div>
                                         </div>
@@ -383,28 +400,33 @@ const Profile = () => {
                             <div className="border border-gray-500 rounded-md p-3 bg-base-100 flex-1/2">
                                 {!isClickedAge ?
                                     (<div>
-                                        <p className="text-lg font-bold">Age 
-                                            <button className="cursor-pointer text-xs mx-4" onClick={()=>setIsClickedAge(true)}>
+                                        <div className="flex">
+                                            <p className="text-lg font-bold max-w-fit">Age</p> 
+                                            <button className="cursor-pointer text-xs ml-3.5" onClick={()=>setIsClickedAge(true)}>
                                                 <FaEdit />
                                             </button>
-                                        </p>
+                                        </div>
+                                        
                                         <p className="py-2 flex items-center gap-2"><FaCakeCandles /> {ageValue}</p>
                                     </div>) :
                                     (<div>
                                         <form onSubmit={handleAge}>
                                             <div className="flex items-center gap-2">
-                                                <p className="text-lg font-bold max-w-fit">Age</p>
-                                                <button className="text-sm cursor-pointer btn btn-sm btn-ghost" 
-                                                    value="cancel"
-                                                    type="button"
-                                                    onClick={handleAge}>
-                                                    <FaTimes />
-                                                </button>
-                                                <button className="text-sm cursor-pointer btn btn-sm btn-ghost" 
-                                                    value="save"
-                                                    type="submit">
-                                                    <FaCheck />
-                                                </button>
+                                                <p className="text-lg font-bold max-w-fit mr-1">Age</p>
+                                                <div className="flex gap-2">
+                                                    <button className="text-sm cursor-pointer btn btn-sm btn-ghost p-1"
+                                                        value="cancel"
+                                                        type="button"
+                                                        onClick={handleAge}>
+                                                        <FaTimes />
+                                                    </button>
+                                                    <button className="text-sm cursor-pointer btn btn-sm btn-ghost p-1"
+                                                        value="save"
+                                                        type="submit">
+                                                        <FaCheck />
+                                                    </button>
+                                                </div>
+                                                
                                             </div>
                                             
                                             <fieldset className="flex items-center gap-2">
