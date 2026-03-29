@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { addRequests } from "../utils/requestsSlice";
-import { fetchAccept, fetchConnectionData, fetchReject, fetchRequestData } from "../utils/fetchData";
+import { addRequests, removeRequest } from "../utils/requestsSlice";
+import { fetchReview, fetchConnectionData,fetchRequestData } from "../utils/fetchData";
 import { useNavigate } from "react-router-dom";
 import { addConnections } from "../utils/connectionsSlice";
 
@@ -9,7 +9,6 @@ const Request = () => {
     const navigate = useNavigate();
     const requests = useSelector((store)=>store.requests);
     const connections = useSelector((store)=>store.connections);
-    const [pendingRequest, setPendingRequests] = useState([]);
     const dispatch = useDispatch();
     useEffect(()=>{
         if(!requests){
@@ -17,24 +16,19 @@ const Request = () => {
                 try{
                     const requests = await fetchRequestData();
                     dispatch(addRequests(requests));
-                    setPendingRequests(requests);
                 } catch (err){
                     const {status, statusText, data} = err?.response
                     if(status === 401) return navigate("/login");
                     else return navigate("/*", {state: {status, statusText, data}});
                 }
             })();
-        } else {
-            setPendingRequests(requests);
         }
     },[requests]);
 
-    const handleReject = async (index, _id)=>{
+    const handleReject = async (_id, elementId)=>{
         try{
-            await fetchReject(_id);
-            const newpending = requests.filter((e, i)=>(i != index));
-            setPendingRequests(newpending);
-            dispatch(addRequests(newpending));
+            await fetchReview({status: "rejected", _id});
+            dispatch(removeRequest({_id: elementId}));
         } catch (err) {
             console.log(err);
             const {status, statusText, data} = err?.response
@@ -42,16 +36,14 @@ const Request = () => {
             else return navigate("/*", {state: {status, statusText, data}});
         }
     }
-    const handleAccept = async (index, _id)=>{
+    const handleAccept = async (element)=>{
         try{
-            await fetchAccept(_id);
-            const newpending = requests.filter((e, i)=>(i !== index));
-            setPendingRequests(newpending);
-            
-            const acceptedUser = requests[index]?.senderId;
+            const acceptedUser = element?.senderId;
             if(!acceptedUser) return;
 
-            dispatch(addRequests(newpending));
+            await fetchReview({status: "accepted",_id: element?.senderId?._id});
+
+            dispatch(removeRequest({_id: element?._id}));
 
             if(connections === null){
                 try{
@@ -67,7 +59,6 @@ const Request = () => {
                 dispatch(addConnections(newconnection));
             }            
         } catch (err) {
-            console.log(err);
             const {status, statusText, data} = err?.response
             if(status === 401) return navigate("/login");
             else return navigate("/*", {state: {status, statusText, data}});
@@ -86,8 +77,9 @@ const Request = () => {
                 </label>
                 <h2 className="text-center text-lg font-bold pb-2 border-b border-gray-500/70">Requests</h2>
                 <ul>
-                    {pendingRequest.length != 0 ?
-                        pendingRequest.map((element, index)=>{
+                    {requests && requests.length > 0 ?
+                        requests.map((element)=>{
+                            const elementId = element?._id;
                             const {_id, photourl, firstName, lastName} = element?.senderId;
                             return (
                             <li key={_id}>
@@ -106,15 +98,11 @@ const Request = () => {
                                     </label>
                                     <div className="flex items-center max-h-min max-w-fit gap-x-2">
                                         <button className="max-h-fit btn btn-error" onClick={(e)=>{
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleReject(index, _id)}}>
+                                            handleReject(_id, elementId)}}>
                                                 Reject
                                         </button>
                                         <button className="max-h-fit btn btn-success" onClick={(e)=>{
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleAccept(index, _id)}}>
+                                            handleAccept(element)}}>
                                                 Accept
                                         </button>
                                     </div>

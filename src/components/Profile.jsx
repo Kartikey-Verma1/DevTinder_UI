@@ -8,6 +8,8 @@ import { FaCakeCandles } from "react-icons/fa6";
 import { fetchDeleteProfile, fetchEdit, fetchUserData } from "../utils/fetchData";
 
 const Profile = () => {
+    const [showWarning, setShowWarning] = useState(true);
+
     const [errorMessageName, setErrorMessageName] = useState("");
     const [errorMessageAbout, setErrorMessageAbout] = useState("");
     const [errorMessageSkill, setErrorMessageSkill] = useState("");
@@ -23,17 +25,13 @@ const Profile = () => {
     const [firstNameValue, setFirstNameValue] = useState("");
     const [lastNameValue, setLastNameValue] = useState("");
     const [aboutValue, setAboutValue] = useState("Hey there! I am on DevTinder.");
-    const [skillsValue, setSkillsValue] = useState([]);
     const [newSkill, setNewSkill] = useState("");
-    const [genderValue, setGenderValue] = useState("");
     const [ageValue, setAgeValue] = useState(NaN);
 
     const setData = (data)=>{
         setFirstNameValue(data.firstName);
         setLastNameValue(data.lastName || "");
         setAboutValue(data.about || "");
-        setSkillsValue(data.skills || []);
-        setGenderValue(data.gender);
         setAgeValue(data.age);
     }
 
@@ -104,7 +102,6 @@ const Profile = () => {
     }
     const handleSkillsRemove = async (index) => {
         const updatedList = user.skills.filter((element, i)=> i != index);
-        setSkillsValue(updatedList);
         await editCall({skills: updatedList});
     }
     const handleSkillsAdd = async (e) => {
@@ -114,15 +111,13 @@ const Profile = () => {
             setErrorMessageSkill("Size of skill should be less than 20");
             return;
         }
-        const dataToPass = [...skillsValue, newSkill];
+        const dataToPass = [...user.skills, newSkill];
         await editCall({skills: dataToPass});
-        setSkillsValue(dataToPass)
         setErrorMessageSkill("");
         setNewSkill("");
         setIsClickedSkills(false);
     }
     const handleGender = async (e) => {
-        setGenderValue(e.currentTarget.value);
         await editCall({gender: e.currentTarget.value || null});
         document.activeElement.blur();
     }
@@ -213,9 +208,9 @@ const Profile = () => {
                             </label>
                             <input type="checkbox" id="my_modal_photo" className="modal-toggle" />
                             <div className="modal" role="dialog">
-                                <div className="modal-box">
-                                    <div>
-                                        <img className="aspect-16/15 object-cover"
+                                <div className="modal-box p-6 max-w-fit">
+                                    <div className="max-w-sm">
+                                        <img className="aspect-16/18 object-cover"
                                             src={user.photourl}
                                             alt="profile photo" />
                                     </div>
@@ -327,7 +322,7 @@ const Profile = () => {
                                         </button>
                                     </p>
                                 ))}
-                                {skillsValue.length < 20 ?
+                                {user?.skills.length < 20 ?
                                 <><label htmlFor="my_modal_6" className="btn max-h-min max-w-min mr-5 mt-2 p-1 px-3 rounded-md bg-base-300" onClick={()=>{setIsClickedSkills(true)}}><FaPlus/>Add</label>
 
                                 <input className="modal-toggle" 
@@ -363,6 +358,18 @@ const Profile = () => {
                                 <></>}
                             </div>
                         </div>
+                        {/* Warning */}
+                        {showWarning ? <div role="alert" className="alert alert-warning">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <span>Only top 4 skills will be shown in your profile card!</span>
+                            <button className="btn btn-warning max-h-fit py-1"
+                                type="button" 
+                                onClick={()=>{setShowWarning(false)}}>
+                                    Ok
+                            </button>
+                        </div> : <></>}
                         {/* age and gender in one div */}
                         <div className="flex gap-3">
                             {/* Gender div */}
@@ -386,10 +393,10 @@ const Profile = () => {
                                     </div>
                                 </div>
                                 <p className="py-2">{
-                                    (genderValue)?
-                                        (genderValue === "male"?
+                                    (user?.gender)?
+                                        (user?.gender === "male"?
                                             <span className="flex items-center gap-2"><FaMars /> Male</span>:
-                                            (genderValue === "female" ?
+                                            (user?.gender === "female" ?
                                                 <span className="flex items-center gap-2"><FaVenus /> Female</span>:
                                                 <span className="flex items-center gap-2"><FaGenderless />Others</span>)):
                                         <span>N/A</span>

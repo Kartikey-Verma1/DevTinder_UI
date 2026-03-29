@@ -3,6 +3,10 @@
     themes: fantasy --default, dark --prefersdark;
 }
 
+html {
+    box-sizing: content-box;
+}
+
 @media (width < 450px) {
     html {
         font-size: 14px;

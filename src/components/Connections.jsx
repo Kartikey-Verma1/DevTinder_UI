@@ -43,15 +43,15 @@ const Connections = () => {
                 <h2 className="text-center text-lg font-bold pb-2 border-b border-gray-500/70">Connections</h2>
                 <ul>
                     {connectionList.length != 0 ?
-                        connectionList.map((element, index)=>{
+                        connectionList.map((element)=>{
                             const {_id, photourl, firstName, lastName} = element;
                             return (
                             <label className="drawer-overlay" 
                             htmlFor="my_drawer"
-                            aria-label="close sidebar">
+                            aria-label="close sidebar"
+                            key={_id}>
                                 <li 
-                                onClick={()=>{navigate(`/requested/profile/view/${_id}`)}} 
-                                key={_id}>
+                                onClick={()=>{navigate(`/requested/profile/view/${_id}`)}}>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <div className="w-10 rounded-full overflow-hidden max-h-fit">

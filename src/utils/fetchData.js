@@ -23,14 +23,8 @@ export const fetchConnectionData = async (navigate) => {
     return connections.data?.data;
 }
 
-export const fetchReject = async (_id)=>{
-    await axios.post(`${BASE_URL}connectionRequest/review/rejected/${_id}`, {}, {
-        withCredentials: true
-    });
-}
-
-export const fetchAccept = async (_id)=>{
-    await axios.post(`${BASE_URL}connectionRequest/review/accepted/${_id}`, {}, {
+export const fetchReview = async ({status, _id})=>{
+    await axios.post(`${BASE_URL}connectionRequest/review/${status}/${_id}`, {}, {
         withCredentials: true
     });
 }
@@ -95,4 +89,21 @@ export const fetchAddProfile = async ({firstName, lastName, email, password, age
         about
     }, { withCredentials: true });
     return fetchedData?.data;
+}
+
+export const fetchFeed = async (Id)=>{
+    let url = `${BASE_URL}user/feed?limit=3`;
+    if(Id){
+        url = url + `&Id=${Id}`;
+    }
+    const fetchedData = await axios.get(`${url}`, {
+        withCredentials: true
+    });
+    return fetchedData?.data?.data;
+}
+
+export const fetchRequest = async ({status, _id})=>{
+    await axios.post(`${BASE_URL}connectionRequest/send/${status}/${_id}`, {}, {
+        withCredentials: true,
+    });
 }
