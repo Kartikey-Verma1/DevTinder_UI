@@ -36,12 +36,14 @@ const Connections = () => {
                 aria-label="close sidebar">
             </label>
             <div className="menu bg-base-200 min-h-full w-90 p-4">
-                <label className="drawer-overlay cursor-pointer max-w-min px-2"
-                    htmlFor="my_drawer" 
-                    aria-label="close sidebar">❮
-                </label>
+                <div className="text-right">
+                    <label className="drawer-overlay cursor-pointer max-w-min px-2"
+                        htmlFor="my_drawer" 
+                        aria-label="close sidebar">Close ❯
+                    </label>
+                </div>
                 <h2 className="text-center text-lg font-bold pb-2 border-b border-gray-500/70">Connections</h2>
-                <ul>
+                <ul className="mt-1">
                     {connectionList.length != 0 ?
                         connectionList.map((element)=>{
                             const {_id, photourl, firstName, lastName} = element;
@@ -61,7 +63,7 @@ const Connections = () => {
                                             </div>
                                             <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
                                         </div>
-                                        {<button className="cursor-pointer">❯</button>}
+                                        <button className="cursor-pointer">❯</button>
                                     </div>
                                 </li>
                             </label>)

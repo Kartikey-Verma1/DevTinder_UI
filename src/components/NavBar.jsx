@@ -3,7 +3,7 @@ import ThemeController from "./ThemeController";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../utils/userSlice";
 import { removeAllRequests } from "../utils/requestsSlice";
-import { removeConnections } from "../utils/connectionsSlice";
+import { clearConnection } from "../utils/connectionsSlice";
 import { fetchLogout } from "../utils/fetchData";
 import { clearFeed } from "../utils/feedSlice";
 
@@ -15,7 +15,7 @@ const NavBar = ({setDrawerType}) => {
         try{
             dispatch(removeUser());
             dispatch(removeAllRequests());
-            dispatch(removeConnections());
+            dispatch(clearConnection());
             dispatch(clearFeed());
             navigate("/login");
             await fetchLogout();

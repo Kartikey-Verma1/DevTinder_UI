@@ -16,11 +16,18 @@ export const fetchRequestData = async () => {
 
 }
 
-export const fetchConnectionData = async (navigate) => {
+export const fetchConnectionData = async () => {
     const connections = await axios.get(`${BASE_URL}user/connections`, {
         withCredentials: true
     });
     return connections.data?.data;
+}
+
+export const fetchInterestData = async () => {
+    const fetchedData = await axios.get(`${BASE_URL}user/requests/sent`, {
+        withCredentials: true
+    });
+    return fetchedData.data?.data;
 }
 
 export const fetchReview = async ({status, _id})=>{
@@ -103,7 +110,14 @@ export const fetchFeed = async (Id)=>{
 }
 
 export const fetchRequest = async ({status, _id})=>{
-    await axios.post(`${BASE_URL}connectionRequest/send/${status}/${_id}`, {}, {
+    const fetchedData = await axios.post(`${BASE_URL}connectionRequest/send/${status}/${_id}`, {}, {
         withCredentials: true,
+    });
+    return fetchedData?.data.data;
+}
+
+export const fetchWithdraw = async (id)=>{
+    await axios.post(`${BASE_URL}connectionRequest/withdraw/interaction/${id}`, {}, {
+        withCredentials: true
     });
 }

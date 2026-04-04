@@ -7,12 +7,18 @@ const connectionsSlice = createSlice({
         addConnections: (state, action)=>{
             return action.payload;
         },
-        removeConnections: ()=>{
+        pushConnection: (state, action)=>{
+            state.push(action.payload);
+        },
+        removeConnection: (state, action)=>{
+            return state.filter((element)=>element._id != action.payload._id);
+        },
+        clearConnection: ()=>{
             return null;
         }
     }
 });
 
-export const {addConnections, removeConnections} = connectionsSlice.actions;
+export const {addConnections, pushConnection, removeConnection, clearConnection} = connectionsSlice.actions;
 
 export default connectionsSlice.reducer;

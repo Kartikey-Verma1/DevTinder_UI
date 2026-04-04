@@ -1,29 +1,50 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addRequests, removeRequest } from "../utils/requestsSlice";
-import { fetchReview, fetchConnectionData,fetchRequestData } from "../utils/fetchData";
+import { fetchReview, fetchConnectionData, fetchRequestData, fetchInterestData, fetchWithdraw } from "../utils/fetchData";
 import { useNavigate } from "react-router-dom";
-import { addConnections } from "../utils/connectionsSlice";
-
+import { addConnections, pushConnection } from "../utils/connectionsSlice";
+import { addInterests, removeInterest } from "../utils/interestsSlice";
 const Request = () => {
+    const [page, setPage] = useState(1);
+
     const navigate = useNavigate();
     const requests = useSelector((store)=>store.requests);
     const connections = useSelector((store)=>store.connections);
+    const interests = useSelector((store)=>store.interests);
     const dispatch = useDispatch();
-    useEffect(()=>{
-        if(!requests){
-            (async function () {
-                try{
-                    const requests = await fetchRequestData();
-                    dispatch(addRequests(requests));
-                } catch (err){
-                    const {status, statusText, data} = err?.response
-                    if(status === 401) return navigate("/login");
-                    else return navigate("/*", {state: {status, statusText, data}});
-                }
-            })();
+
+    const requestData = async ()=>{
+        try{
+            const requests = await fetchRequestData();
+            dispatch(addRequests(requests));
+        } catch (err){
+            const {status, statusText, data} = err?.response
+            if(status === 401) return navigate("/login");
+            else return navigate("/*", {state: {status, statusText, data}});
         }
-    },[requests]);
+    }
+
+    const interestData = async ()=>{
+        try{
+            const interests = await fetchInterestData();
+            dispatch(addInterests(interests))
+        } catch(err){
+            const {status, statusText, data} = err?.response
+            if(status === 401) return navigate("/login");
+            else return navigate("/*", {state: {status, statusText, data}});
+        }
+    }
+    
+    useEffect(()=>{
+        if(requests.length <= 0){
+            requestData();
+        }
+        if(interests.length <= 0){
+            console.log("hehehe");
+            interestData();
+        }
+    },[]);
 
     const handleReject = async (_id, elementId)=>{
         try{
@@ -55,10 +76,21 @@ const Request = () => {
                     else return navigate("/*", {state: {status, statusText, data}});
                 }
             } else {
-                const newconnection = [...(connections || []), acceptedUser];
-                dispatch(addConnections(newconnection));
-            }            
+                console.log(acceptedUser);
+                dispatch(pushConnection(acceptedUser));
+            }
         } catch (err) {
+            const {status, statusText, data} = err?.response
+            if(status === 401) return navigate("/login");
+            else return navigate("/*", {state: {status, statusText, data}});
+        }
+    }
+    const handleWithdraw = async (_id, elementId)=>{
+        try{
+            await fetchWithdraw(_id);
+            dispatch(removeInterest({_id: elementId}));
+        } catch (err) {
+            console.log(err);
             const {status, statusText, data} = err?.response
             if(status === 401) return navigate("/login");
             else return navigate("/*", {state: {status, statusText, data}});
@@ -71,49 +103,89 @@ const Request = () => {
                 aria-label="close sidebar" >
             </label>
             <div className="menu bg-base-200 min-h-full w-90 p-4">
-                <label className="drawer-overlay cursor-pointer max-w-min px-2"
-                    htmlFor="my_drawer" 
-                    aria-label="close sidebar">❮
-                </label>
+                <div className="text-right">
+                    <label className="drawer-overlay cursor-pointer max-w-min px-2"
+                        htmlFor="my_drawer" 
+                        aria-label="close sidebar">Close ❯
+                    </label>
+                </div>
                 <h2 className="text-center text-lg font-bold pb-2 border-b border-gray-500/70">Requests</h2>
-                <ul>
-                    {requests && requests.length > 0 ?
-                        requests.map((element)=>{
-                            const elementId = element?._id;
-                            const {_id, photourl, firstName, lastName} = element?.senderId;
-                            return (
-                            <li key={_id}>
-                                <div className="flex items-center justify-between">
-                                    <label className="drawer-overlay cursor-pointer"
-                                        htmlFor="my_drawer" 
-                                        aria-label="close sidebar" >
-                                        <div className="flex items-center gap-2" onClick={()=>{navigate(`/requested/profile/view/${_id}`)}}>
-                                            <div className="w-10 rounded-full overflow-hidden max-h-fit">
-                                                <img
-                                                    alt="user photo"
-                                                    src={photourl} />
+                <div className="flex gap-1 bg-base-300 rounded-xl mt-1 p-1">
+                    <a href="#item1" onClick={()=>{setPage(1)}} className={`py-2 flex-1/2 text-center rounded-xl hover:bg-base-100 ${page === 1 ? "bg-base-100": ""}`}>Received</a>
+                    <a href="#item2" onClick={()=>{setPage(2)}} className={`py-2 flex-1/2 text-center rounded-xl hover:bg-base-100 ${page === 2 ? "bg-base-100" : ""}`}>Sent</a>
+                </div>
+                <div className="carousel w-full mt-1">
+                    <ul id="item1" className="carousel-item min-w-full flex flex-col">
+                        {requests && requests.length > 0 ?
+                            requests.map((element)=>{
+                                const elementId = element?._id;
+                                const {_id, photourl, firstName, lastName} = element?.senderId;
+                                return (
+                                <li key={_id} className="min-w-full">
+                                    <div className="flex items-center justify-between">
+                                        <label className="drawer-overlay cursor-pointer"
+                                            htmlFor="my_drawer" 
+                                            aria-label="close sidebar" >
+                                            <div className="flex items-center gap-2" onClick={()=>{navigate(`/requested/profile/view/${_id}`)}}>
+                                                <div className="w-10 rounded-full overflow-hidden max-h-fit">
+                                                    <img
+                                                        alt="user photo"
+                                                        src={photourl} />
+                                                </div>
+                                                <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
                                             </div>
-                                            <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
+                                        </label>
+                                        <div className="flex items-center max-h-min max-w-fit gap-x-2">
+                                            <button className="max-h-fit btn btn-error" onClick={()=>{
+                                                handleReject(_id, elementId)}}>
+                                                    Reject
+                                            </button>
+                                            <button className="max-h-fit btn btn-success" onClick={()=>{
+                                                handleAccept(element)}}>
+                                                    Accept
+                                            </button>
                                         </div>
-                                    </label>
-                                    <div className="flex items-center max-h-min max-w-fit gap-x-2">
-                                        <button className="max-h-fit btn btn-error" onClick={(e)=>{
-                                            handleReject(_id, elementId)}}>
-                                                Reject
-                                        </button>
-                                        <button className="max-h-fit btn btn-success" onClick={(e)=>{
-                                            handleAccept(element)}}>
-                                                Accept
+                                    </div>
+                                </li>)
+                            }) :
+                            <div className="min-h-full min-w-full text-center">
+                                <p>No request found!☹️</p>
+                            </div>
+                        }
+                    </ul>
+                    <ul id="item2" className="carousel-item min-w-full flex flex-col">
+                        {interests.length > 0 ?
+                        interests.map((element)=>{
+                            const elementId = element?._id;
+                            const {_id, photourl, firstName, lastName} = element?.receiverId;
+                            return (
+                                <li key={_id} className="min-w-full">
+                                    <div className="flex items-center justify-between">
+                                        <label className="drawer-overlay cursor-pointer"
+                                            htmlFor="my_drawer" 
+                                            aria-label="close sidebar" >
+                                            <div className="flex items-center gap-2" onClick={()=>{navigate(`/requested/profile/view/${_id}`)}}>
+                                                <div className="w-10 rounded-full overflow-hidden max-h-fit">
+                                                    <img
+                                                        alt="user photo"
+                                                        src={photourl} />
+                                                </div>
+                                                <p className="max-h-fit">{`${firstName} ${lastName}`}</p>
+                                            </div>
+                                        </label>
+                                        <button className="max-h-fit btn btn-info" onClick={()=>{handleWithdraw(_id, elementId)}}>
+                                            Withdraw
                                         </button>
                                     </div>
-                                </div>
-                            </li>)
-                        }) :
-                        <div className="min-h-full min-w-full text-center">
-                            <p>No request found!☹️</p>
-                        </div>
-                    }
-                </ul>
+                                </li>
+                            )
+                        }):
+                            <div className="min-h-full min-w-full my-1 text-center">
+                                <p>No request found!☹️</p>
+                            </div>
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
     )

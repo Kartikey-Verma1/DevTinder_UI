@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchFeed, fetchRequest, fetchUserData } from "../utils/fetchData.js";
 import { addFeed, removeFrontFeed } from "../utils/feedSlice.js";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
 const Feed = () => {
+    const [shimmer, setShimmer] = useState(true);
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((store)=>store.user);
@@ -17,14 +19,14 @@ const Feed = () => {
             await fetchRequest({status: "ignored", _id});
             
             if(feed.length === 1){
-                const lastId = feed[feed.length - 1]._id
+                const lastId = feed[feed.length - 1]._id;
                 const fetchedData = await fetchFeed(lastId);
                 dispatch(addFeed(fetchedData));
             }
 
             dispatch(removeFrontFeed());
         } catch (err) {
-            const {status, statusText, data} = err?.response
+            const {status, statusText, data} = err?.response;
             if(status === 401) return navigate("/login");
             else return navigate("/*", {state: {status, statusText, data}});
         }
@@ -35,7 +37,7 @@ const Feed = () => {
             await fetchRequest({status: "interested", _id});
 
             if(feed.length === 1){
-                const lastId = feed[feed.length - 1]._id
+                const lastId = feed[feed.length - 1]._id;
                 const fetchedData = await fetchFeed(lastId);
                 dispatch(addFeed(fetchedData));
             }
@@ -43,6 +45,16 @@ const Feed = () => {
             dispatch(removeFrontFeed());
         } catch (err) {
             const {status, statusText, data} = err?.response
+            if(status === 429){
+                alert(data?.message);
+                dispatch(removeFrontFeed());
+                if(feed.length === 1){
+                    const lastId = feed[feed.length - 1]._id;
+                    const fetchedData = await fetchFeed(lastId);
+                    dispatch(addFeed(fetchedData));
+                }
+                return;
+            }
             if(status === 401) return navigate("/login");
             else return navigate("/*", {state: {status, statusText, data}});
         }
@@ -61,8 +73,10 @@ const Feed = () => {
     
     const feedData = async () => {
         try{
+            setShimmer(true);
             const fetchedData = await fetchFeed();
             dispatch(addFeed(fetchedData));
+            setShimmer(false);
         } catch (err) {
             const {status, statusText, data} = err?.response
             if(status === 401) return navigate("/login");
@@ -74,10 +88,12 @@ const Feed = () => {
         if(!user){
             userData();
         }
-        if(feed.length == 0){
+    }, []);
+    useEffect(()=>{
+        if(user && feed.length === 0){
             feedData();
         }
-    }, []);
+    }, [user])
     return (
         <div className="min-w-full min-h-fit py-10 px-5">
             {feed.length > 0 ? 
@@ -113,7 +129,9 @@ const Feed = () => {
                         </button>
                     </div>
                 </div>: 
-            <></>}
+            <>{shimmer ? 
+            <div className="rounded-box mx-auto shadow-[0_0_12px_rgba(147,197,253,0.3)] h-90 max-w-84 skeleton"></div>: 
+            <div className="rounded-box mx-auto shadow-[0_0_12px_rgba(147,197,253,0.3)] h-90 max-w-84 text-center py-40 text-xl">Come tomorrow to discover more</div>}</>}
         </div>
     )
 }
