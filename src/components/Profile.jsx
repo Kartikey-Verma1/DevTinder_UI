@@ -208,15 +208,13 @@ const Profile = () => {
                             </label>
                             <input type="checkbox" id="my_modal_photo" className="modal-toggle" />
                             <div className="modal" role="dialog">
-                                <div className="modal-box p-6 max-w-fit">
+                                <div className="modal-box p-0 max-w-fit max-h-fit">
                                     <div className="max-w-sm">
                                         <img className="aspect-16/18 object-cover"
                                             src={user.photourl}
                                             alt="profile photo" />
                                     </div>
-                                    <div className="modal-action">
-                                        <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full cursor-pointer hover:bg-base-200 absolute right-1 top-1">✕</label>
-                                    </div>
+                                    <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full cursor-pointer bg-base-100/20 hover:bg-base-200 absolute right-1 top-1">✕</label>
                                 </div>
                             </div>
                             {/* Name */}
@@ -312,15 +310,17 @@ const Profile = () => {
                             <p className="text-lg font-bold">Skills</p>
                             <div className="flex flex-wrap">{
                                 user.skills.map((element, index) => (
-                                    <p key={index}  className="max-w-min mr-5 mt-2 p-1 px-3 rounded-md bg-base-300 relative">
-                                        {element} 
-                                        <button className="absolute cursor-pointer right-0 top-0 -translate-y-1/2 translate-x-1/2"
-                                          type="button"
-                                          value="cancel"
-                                          onClick={(e)=>{handleSkillsRemove(index)}}>
-                                            <FaTimes />
+                                    <div key={index} className="max-w-min mr-5 mt-2 bg-base-300 rounded-md relative">
+                                        <p className="p-1 px-3 border border-gray-50/0 rounded-md select-none">
+                                            {element} 
+                                        </p>
+                                        <button className="absolute bg-transparent border-none shadow-none cursor-pointer right-0 top-0 -translate-y-1/2 translate-x-1/2"
+                                            type="button"
+                                            value="cancel"
+                                            onClick={()=>{handleSkillsRemove(index)}}>
+                                                <FaTimes />
                                         </button>
-                                    </p>
+                                    </div>
                                 ))}
                                 {user?.skills.length < 20 ?
                                 <><label htmlFor="my_modal_6" className="btn max-h-min max-w-min mr-5 mt-2 p-1 px-3 rounded-md bg-base-300" onClick={()=>{setIsClickedSkills(true)}}><FaPlus/>Add</label>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addRequests, removeRequest } from "../utils/requestsSlice";
 import { fetchReview, fetchConnectionData, fetchRequestData, fetchInterestData, fetchWithdraw } from "../utils/fetchData";
@@ -7,6 +7,10 @@ import { addConnections, pushConnection } from "../utils/connectionsSlice";
 import { addInterests, removeInterest } from "../utils/interestsSlice";
 const Request = () => {
     const [page, setPage] = useState(1);
+
+    const item1ref = useRef(null);
+    const item2ref = useRef(null);
+    const carouselref = useRef(null);
 
     const navigate = useNavigate();
     const requests = useSelector((store)=>store.requests);
@@ -41,7 +45,6 @@ const Request = () => {
             requestData();
         }
         if(interests.length <= 0){
-            console.log("hehehe");
             interestData();
         }
     },[]);
@@ -96,13 +99,18 @@ const Request = () => {
             else return navigate("/*", {state: {status, statusText, data}});
         }
     }
+    const handlescroll = (e)=>{
+        const ref = carouselref.current;
+        const p = Math.round(ref.scrollLeft/ref.offsetWidth) + 1;
+        setPage(p);
+    }
     return (
         <div className="drawer-side  backdrop-blur-xs">
             <label className="drawer-overlay"
                 htmlFor="my_drawer" 
                 aria-label="close sidebar" >
             </label>
-            <div className="menu bg-base-200 min-h-full w-90 p-4">
+            <div className="menu bg-base-200 min-h-full w-90 p-4" onScroll={()=>{console.log("hehehe")}}>
                 <div className="text-right">
                     <label className="drawer-overlay cursor-pointer max-w-min px-2"
                         htmlFor="my_drawer" 
@@ -111,11 +119,18 @@ const Request = () => {
                 </div>
                 <h2 className="text-center text-lg font-bold pb-2 border-b border-gray-500/70">Requests</h2>
                 <div className="flex gap-1 bg-base-300 rounded-xl mt-1 p-1">
-                    <a href="#item1" onClick={()=>{setPage(1)}} className={`py-2 flex-1/2 text-center rounded-xl hover:bg-base-100 ${page === 1 ? "bg-base-100": ""}`}>Received</a>
-                    <a href="#item2" onClick={()=>{setPage(2)}} className={`py-2 flex-1/2 text-center rounded-xl hover:bg-base-100 ${page === 2 ? "bg-base-100" : ""}`}>Sent</a>
+                    <button onClick={()=>{
+                        item1ref.current?.scrollIntoView({behaviour: "smooth"});
+                        setPage(1)}
+                    } className={`py-2 flex-1/2 text-center rounded-xl hover:bg-base-100 ${page === 1 ? "bg-base-100": ""}`}>Received</button>
+                    
+                    <button onClick={(e)=>{
+                        item2ref.current?.scrollIntoView({behaviour: "smooth"});
+                        setPage(2)}
+                    } className={`py-2 flex-1/2 text-center rounded-xl hover:bg-base-100 ${page === 2 ? "bg-base-100" : ""}`}>Sent</button>
                 </div>
-                <div className="carousel w-full mt-1">
-                    <ul id="item1" className="carousel-item min-w-full flex flex-col">
+                <div ref={carouselref} onScroll={handlescroll} className="carousel w-full mt-1">
+                    <ul ref={item1ref} className="carousel-item min-w-full min-h-93 flex flex-col">
                         {requests && requests.length > 0 ?
                             requests.map((element)=>{
                                 const elementId = element?._id;
@@ -153,7 +168,7 @@ const Request = () => {
                             </div>
                         }
                     </ul>
-                    <ul id="item2" className="carousel-item min-w-full flex flex-col">
+                    <ul ref={item2ref} className="carousel-item min-w-full min-h-93 flex flex-col">
                         {interests.length > 0 ?
                         interests.map((element)=>{
                             const elementId = element?._id;

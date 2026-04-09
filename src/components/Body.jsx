@@ -1,13 +1,20 @@
-import { Outlet, useSearchParams } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 import NavBar from "./NavBar"
 import Footer from "./Footer"
 import Request from "./Request"
 import Connections from "./Connections"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const Body = () => {
     const [drawerType, setDrawerType] = useState("");
-
+    useEffect(()=>{
+        const handleBack = (e)=>{
+            const checkbox = document.getElementById("my_drawer");
+            if(checkbox.checked) checkbox.checked = false;
+        }
+        window.addEventListener("popstate", handleBack);
+        return ()=>{window.removeEventListener("popstate", handleBack)};
+    },[]);
     return (
         <div className="drawer drawer-end">
             <input  className="drawer-toggle"

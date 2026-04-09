@@ -213,7 +213,7 @@ const RequestedProfileView = () => {
                                         src={user.photourl}
                                         alt="profile photo" />
                                 </div>
-                                <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full cursor-pointer hover:bg-base-200 absolute right-1 top-1">✕</label>
+                                <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full cursor-pointer bg-base-100/20 hover:bg-base-200 absolute right-1 top-1">✕</label>
                             </div>
                         </div>
                         <h2 className="card-title text-2xl">{`${requestedData.firstName} ${requestedData.lastName}`}</h2>
