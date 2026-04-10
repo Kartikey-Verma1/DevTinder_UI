@@ -6,8 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import ShimmerProfile from "./ShimmerProfile";
 import { FaCakeCandles } from "react-icons/fa6";
 import { fetchDeleteProfile, fetchEdit, fetchUserData } from "../utils/fetchData";
+import SkillsDraggableEditable from "./SkillsDraggableEditable";
+import { DragDropProvider } from "@dnd-kit/react";
 
 const Profile = () => {
+    const [dragIndex, setDragIndex] = useState(null);
+
     const [showWarning, setShowWarning] = useState(true);
 
     const [errorMessageName, setErrorMessageName] = useState("");
@@ -163,6 +167,19 @@ const Profile = () => {
             return navigate("/*", {state: {status, statusText, data}});
         }
     }
+    const handleDragEnd = async (e) => {
+        const targetIndex = e.operation.target.index;
+        const updatedSkills = [...user.skills];
+        const [item] = updatedSkills.splice(parseInt(dragIndex), 1);
+        updatedSkills.splice(parseInt(targetIndex), 0, item);
+
+        await editCall({skills: updatedSkills});
+    }
+    const handleDragStart = async(e) => {
+        const id = e.operation.target.index;
+        setDragIndex(id);
+        console.log(id);
+    }
 
     // logic to fetch data and rendering it, first checking that if it is present than if present than adding it to redux store otherwise fetching data than adding to store.
     const [flagData, setFlagData] = useState(false); // for shimmer.
@@ -214,7 +231,7 @@ const Profile = () => {
                                             src={user.photourl}
                                             alt="profile photo" />
                                     </div>
-                                    <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full cursor-pointer bg-base-100/20 hover:bg-base-200 absolute right-1 top-1">✕</label>
+                                    <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full text-gray-500 font-bold cursor-pointer bg-base-100/30 hover:bg-gray-800 absolute right-1 top-1">✕</label>
                                 </div>
                             </div>
                             {/* Name */}
@@ -308,22 +325,18 @@ const Profile = () => {
                         {/* Skills :- used loop to load all skills with design */}
                         <div className="border border-gray-500 rounded-md p-3 bg-base-100 ">
                             <p className="text-lg font-bold">Skills</p>
-                            <div className="flex flex-wrap">{
-                                user.skills.map((element, index) => (
-                                    <div key={index} className="max-w-min mr-5 mt-2 bg-base-300 rounded-md relative">
-                                        <p className="p-1 px-3 border border-gray-50/0 rounded-md select-none">
-                                            {element} 
-                                        </p>
-                                        <button className="absolute bg-transparent border-none shadow-none cursor-pointer right-0 top-0 -translate-y-1/2 translate-x-1/2"
-                                            type="button"
-                                            value="cancel"
-                                            onClick={()=>{handleSkillsRemove(index)}}>
-                                                <FaTimes />
-                                        </button>
-                                    </div>
-                                ))}
+                            <div>
+                                <DragDropProvider onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+                                    <ul className="flex flex-wrap" id="drag_context">
+                                        {user.skills.map((element, index) => (
+                                            <SkillsDraggableEditable key={element} element={element} handleSkillsRemove={handleSkillsRemove} index={index} />
+                                        ))}
+                                    </ul>
+                                </DragDropProvider>
                                 {user?.skills.length < 20 ?
-                                <><label htmlFor="my_modal_6" className="btn max-h-min max-w-min mr-5 mt-2 p-1 px-3 rounded-md bg-base-300" onClick={()=>{setIsClickedSkills(true)}}><FaPlus/>Add</label>
+                                <><div className="text-right">
+                                    <label htmlFor="my_modal_6" className="btn max-h-min max-w-min mt-2 p-1 px-3 rounded-md bg-base-300" onClick={()=>{setIsClickedSkills(true)}}><FaPlus/>Add</label>
+                                </div>
 
                                 <input className="modal-toggle" 
                                     type="checkbox" 
