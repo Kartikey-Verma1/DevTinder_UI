@@ -27,7 +27,7 @@ const NavBar = ({setDrawerType}) => {
     return (
         <div className="navbar bg-base-100 shadow-[0_0_10px_rgba(147,197,253,0.3)]">
             <div className="flex-1">
-                <Link to="/" className="btn btn-ghost text-xl">DevTinder</Link>
+                <Link to="/" className="btn btn-ghost text-xl">Linker</Link>
             </div>
             <div className="flex mx-5 items-center justify-center gap-5">
                 <ThemeController />

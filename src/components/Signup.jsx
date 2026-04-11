@@ -19,7 +19,7 @@ const Signup = () => {
     const [gender, setGender] = useState("male");
     const [newSkill, setNewSkill] = useState("");
     const [skills, setSkills] = useState([]);
-    const [about, setAbout] = useState("Hey there! I am on DevTinder.");
+    const [about, setAbout] = useState("Hey there! I am on Linker.");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -153,8 +153,8 @@ const Signup = () => {
                             <fieldset className="fieldset">
                                 <label className="label">About</label>
                                 <textarea className="validator input min-h-28 rounded-md outline-0 resize-none whitespace-pre-wrap p-2"
-                                    placeholder="Hey there! I am on DevTinder." 
-                                    defaultValue={about || "Hey there! I am on DevTinder."}
+                                    placeholder="Hey there! I am on Linker." 
+                                    defaultValue={about || "Hey there! I am on Linker."}
                                     wrap="soft"
                                     maxLength="200"
                                     onChange={(e)=>{

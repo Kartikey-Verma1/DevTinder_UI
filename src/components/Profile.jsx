@@ -31,7 +31,7 @@ const Profile = () => {
     const [formData, setFormData] = useState({
         firstName : "",
         lastName: "",
-        about: "Hey there! I am on DevTinder.",
+        about: "Hey there! I am on Linker.",
         newSkill: "",
         age: NaN
     }); 
@@ -353,8 +353,8 @@ const Profile = () => {
                                         <p className="text-rose-400">{errorMessageAbout}</p>
                                         <fieldset>
                                             <textarea className="input outline-0 mt-2 p-1 px-3 w-full h-20 resize-none whitespace-pre-wrap bg-base-200"
-                                                placeholder="Hey there! I am on DevTinder." 
-                                                defaultValue={formData.about || "Hey there! I am on DevTinder."}
+                                                placeholder="Hey there! I am on Linker." 
+                                                defaultValue={formData.about || "Hey there! I am on Linker."}
                                                 wrap="soft"
                                                 onChange={(e)=>{handleChange("about", e.target.value)}}
                                             />
