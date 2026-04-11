@@ -19,24 +19,31 @@ const Profile = () => {
     const [errorMessageSkill, setErrorMessageSkill] = useState("");
     const [errorMessageAge, setErrorMessageAge] = useState("");
     // For edit logic
-    // making useState hooks to render the edit field when button clicked
-    const [isClickedName, setIsClickedName] = useState(false);
-    const [isClickedAbout, setIsClickedAbout] = useState(false);
-    const [isClickedSkills, setIsClickedSkills] = useState(false);
-    const [isClickedAge, setIsClickedAge] = useState(false);
+    // making useState hook to render the edit field when button clicked
+    const [isClicked, setIsClicked] = useState({
+        name: false,
+        about: false,
+        skills: false,
+        age: false
+    });
 
-    // making useState hooks for getting the value of the fields
-    const [firstNameValue, setFirstNameValue] = useState("");
-    const [lastNameValue, setLastNameValue] = useState("");
-    const [aboutValue, setAboutValue] = useState("Hey there! I am on DevTinder.");
-    const [newSkill, setNewSkill] = useState("");
-    const [ageValue, setAgeValue] = useState(NaN);
+    // making useState hook for getting the value of the fields
+    const [formData, setFormData] = useState({
+        firstName : "",
+        lastName: "",
+        about: "Hey there! I am on DevTinder.",
+        newSkill: "",
+        age: NaN
+    }); 
 
     const setData = (data)=>{
-        setFirstNameValue(data.firstName);
-        setLastNameValue(data.lastName || "");
-        setAboutValue(data.about || "");
-        setAgeValue(data.age);
+        setFormData({
+            firstName: data.firstName,
+            lastName: data.lastName || "",
+            about: data.about || "",
+            newSkill: "",
+            age: data.age
+        })
     }
 
     const editCall = async (dataToPass)=>{
@@ -58,30 +65,45 @@ const Profile = () => {
         }
     }
 
+    const handleChange = (field, value)=>{
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    }
+    const handleToggle = (field, value)=>{
+        setIsClicked(prev=>({
+            ...prev,
+            [field]: value
+        }));
+    } 
     // onclick function calls
     const handleName = async (e) => {
         e.preventDefault();
         if(e.currentTarget.value === "cancel"){
-            setFirstNameValue(user.firstName);
-            setLastNameValue(user.lastName || "");
-            setIsClickedName(false);
+            setFormData(prev => ({
+                ...prev,
+                firstName: user.firstName,
+                lastName: user.lastName || ""
+            }));
+            handleToggle("name", false);
             setErrorMessageName("");
             return;
         } else {
-            if(firstNameValue === user.firstName && lastNameValue === user.lastName){
-                setIsClickedName(false);
+            if(formData.firstName === user.firstName && formData.lastName === user.lastName){
+                handleToggle("name", false);
                 return;
             }
-            else if(firstNameValue.length < 4 || (lastNameValue.length < 4 && lastNameValue.length > 0)){
+            else if(formData.firstName.length < 4 || (formData.lastName.length < 4 && formData.lastName.length > 0)){
                 setErrorMessageName("Length of first name or last name should be more than 4")
                 return;
             }
             else{
                 let lastName = null;
-                if(lastNameValue.length >= 4) lastName = lastNameValue;
-                const dataToPass = {firstName: firstNameValue, lastName};
+                if(formData.lastName.length >= 4) lastName = formData.lastName;
+                const dataToPass = {firstName: formData.firstName, lastName};
                 await editCall(dataToPass);
-                setIsClickedName(false);
+                handleToggle("name", false);
                 setErrorMessageName("");
             }
             
@@ -90,19 +112,26 @@ const Profile = () => {
     const handleAbout = async (e) => {
         e.preventDefault();
         if(e.currentTarget.value === "cancel"){
-            setAboutValue(user.about);
-            setIsClickedAbout(false);
+            setFormData(prev => ({
+                ...prev,
+                about: user.about
+            }));
+            handleToggle("about", false);
             setErrorMessageAbout("");
             return;
         }
-        if(aboutValue.length > 200){
+        if(formData.about === user.about){
+            handleToggle("about", false);
+            return;
+        }
+        if(formData.about.length > 200){
             setErrorMessageAbout("Max number of letters allowed is 200");
             return;
         }
-        const dataToPass = {about: aboutValue || null};
+        const dataToPass = {about: formData.about || null};
         await editCall(dataToPass);
         setErrorMessageAbout("");
-        setIsClickedAbout(false);
+        handleToggle("about", false);
     }
     const handleSkillsRemove = async (index) => {
         const updatedList = user.skills.filter((element, i)=> i != index);
@@ -110,40 +139,54 @@ const Profile = () => {
     }
     const handleSkillsAdd = async (e) => {
         e.preventDefault();
-        if(newSkill.length <= 0) return;
-        if(newSkill.length > 20){
+        if(formData.newSkill.length <= 0) return;
+        if(formData.newSkill.length > 20){
             setErrorMessageSkill("Size of skill should be less than 20");
             return;
         }
-        const dataToPass = [...user.skills, newSkill];
+        const dataToPass = [...user.skills, formData.newSkill];
         await editCall({skills: dataToPass});
         setErrorMessageSkill("");
-        setNewSkill("");
-        setIsClickedSkills(false);
+        setFormData(prev => ({
+            ...prev,
+            newSkill: ""
+        }));
+        handleToggle("skills", false);
     }
     const handleGender = async (e) => {
+        if(e.currentTarget.value === user.gender){
+            document.activeElement.blur();
+            return;
+        }
         await editCall({gender: e.currentTarget.value || null});
         document.activeElement.blur();
     }
     const handleAge = async (e) => {
         e.preventDefault();
         if(e.currentTarget.value == "cancel"){
-            setAgeValue(user.age);
-            setIsClickedAge(false);
+            setFormData(prev => ({
+                ...prev,
+                age: user.age
+            }));
+            handleToggle("age", false);
             setErrorMessageAge("");
             return;
         }
-        if(ageValue < 16){
+        if(formData.age === user.age){
+            handleToggle("age", false);
+            return;
+        }
+        if(formData.age < 16){
             setErrorMessageAge("Sorry, You are too young to work!");
             return;
         }
-        if(ageValue > 70){
+        if(formData.age > 70){
             setErrorMessageAge("Sorry, You are too old to work!");
             return;
         }
-        await editCall({age: ageValue});
+        await editCall({age: formData.age});
         setErrorMessageAge("");
-        setIsClickedAge(false);
+        handleToggle("age", false);
         return;
     }
     const handleDelete = async (e) => {
@@ -169,6 +212,7 @@ const Profile = () => {
     }
     const handleDragEnd = async (e) => {
         const targetIndex = e.operation.target.index;
+        if(targetIndex === dragIndex) return;
         const updatedSkills = [...user.skills];
         const [item] = updatedSkills.splice(parseInt(dragIndex), 1);
         updatedSkills.splice(parseInt(targetIndex), 0, item);
@@ -178,7 +222,6 @@ const Profile = () => {
     const handleDragStart = async(e) => {
         const id = e.operation.target.index;
         setDragIndex(id);
-        console.log(id);
     }
 
     // logic to fetch data and rendering it, first checking that if it is present than if present than adding it to redux store otherwise fetching data than adding to store.
@@ -231,14 +274,14 @@ const Profile = () => {
                                             src={user.photourl}
                                             alt="profile photo" />
                                     </div>
-                                    <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full text-gray-500 font-bold cursor-pointer bg-base-100/30 hover:bg-gray-800 absolute right-1 top-1">✕</label>
+                                    <label htmlFor="my_modal_photo" className="p-1 px-2 rounded-full text-gray-500 font-bold cursor-pointer bg-base-100/15 hover:bg-gray-800 absolute right-1 top-1">✕</label>
                                 </div>
                             </div>
                             {/* Name */}
-                            {!isClickedName ?
+                            {!isClicked.name ?
                                 // showing name
-                                (<p className="card-title text-2xl my-4">{`${firstNameValue} ${lastNameValue}`} 
-                                    <button className="cursor-pointer text-xs mx-4" onClick={()=>setIsClickedName(true)}>
+                                (<p className="card-title text-2xl my-4">{`${formData.firstName} ${formData.lastName}`} 
+                                    <button className="cursor-pointer text-xs mx-4" onClick={()=>handleToggle("name", true)}>
                                         <FaEdit />
                                     </button>
                                 </p>) :
@@ -251,15 +294,15 @@ const Profile = () => {
                                                     type="text" 
                                                     placeholder="First Name"
                                                     required
-                                                    value={firstNameValue} 
-                                                    onChange={(e)=>{setFirstNameValue(e.target.value)}}/>
+                                                    value={formData.firstName} 
+                                                    onChange={(e)=>{handleChange("firstName", e.target.value)}}/>
                                             </fieldset>
                                             <fieldset>
                                                 <input className="input validator outline-0" 
                                                     type="text" 
                                                     placeholder="Last Name"
-                                                    value={lastNameValue} 
-                                                    onChange={(e)=>{setLastNameValue(e.target.value)}}/>
+                                                    value={formData.lastName} 
+                                                    onChange={(e)=>{handleChange("lastName", e.target.value)}}/>
                                             </fieldset>
                                         </div>
                                         <button className="text-sm cursor-pointer btn btn-sm btn-ghost" 
@@ -281,14 +324,14 @@ const Profile = () => {
 
                         {/* About */}
                         <div className="border border-gray-500 rounded-md p-3 bg-base-100">
-                        {!isClickedAbout ?
+                        {!isClicked.about ?
                             (<div>
                                 <p className="text-lg font-bold">About 
-                                    <button className="cursor-pointer text-xs mx-4" onClick={()=>setIsClickedAbout(true)}>
+                                    <button className="cursor-pointer text-xs mx-4" onClick={()=>handleToggle("about", true)}>
                                         <FaEdit />
                                     </button>
                                 </p>
-                                <p className="py-2">{aboutValue}</p>
+                                <p className="py-2">{formData.about}</p>
                             </div>) :
                             
                                 (<div>
@@ -311,10 +354,10 @@ const Profile = () => {
                                         <fieldset>
                                             <textarea className="input outline-0 mt-2 p-1 px-3 w-full h-20 resize-none whitespace-pre-wrap bg-base-200"
                                                 placeholder="Hey there! I am on DevTinder." 
-                                                defaultValue={aboutValue || "Hey there! I am on DevTinder."}
+                                                defaultValue={formData.about || "Hey there! I am on DevTinder."}
                                                 wrap="soft"
-                                                onChange={(e)=>{setAboutValue(e.target.value)}}
-                                                />
+                                                onChange={(e)=>{handleChange("about", e.target.value)}}
+                                            />
                                         </fieldset>
                                     </form>
                                 </div>)
@@ -335,12 +378,12 @@ const Profile = () => {
                                 </DragDropProvider>
                                 {user?.skills.length < 20 ?
                                 <><div className="text-right">
-                                    <label htmlFor="my_modal_6" className="btn max-h-min max-w-min mt-2 p-1 px-3 rounded-md bg-base-300" onClick={()=>{setIsClickedSkills(true)}}><FaPlus/>Add</label>
+                                    <label htmlFor="my_modal_6" className="btn max-h-min max-w-min mt-2 p-1 px-3 rounded-md bg-base-300" onClick={()=>{handleToggle("skills", true)}}><FaPlus/>Add</label>
                                 </div>
 
                                 <input className="modal-toggle" 
                                     type="checkbox" 
-                                    checked={isClickedSkills} 
+                                    checked={isClicked.skills} 
                                     readOnly/>
                                 <div className="modal " role="dialog"onKeyDown={(e)=>{
                                         if(e.key == "Enter") handleSkillsAdd(e);
@@ -349,16 +392,16 @@ const Profile = () => {
                                         <h3 className="text-lg font-bold">Enter Your New Skill</h3>
                                         <input  className="input outline-0 w-full my-3" 
                                         type="text"
-                                        value={newSkill}
-                                        onChange={(e)=>{setNewSkill(e.target.value)}}/>
+                                        value={formData.newSkill}
+                                        onChange={(e)=>{handleChange("newSkill", e.target.value)}}/>
                                         <p className="text-rose-400">{errorMessageSkill}</p>
                                         <div className="modal-action">
                                             <label  className="btn" 
                                             htmlFor="my_modal_6"
                                             onClick={()=>{
-                                                setNewSkill("")
-                                                setErrorMessageSkill("")
-                                                setIsClickedSkills(false)}}><FaTimes />
+                                                handleChange("newSkill", "");
+                                                setErrorMessageSkill("");
+                                                handleToggle("skills", false)}}><FaTimes />
                                             </label>
                                             <label  className="btn" 
                                             htmlFor="my_modal_6"
@@ -418,16 +461,16 @@ const Profile = () => {
 
                             {/* Age div */}
                             <div className="border border-gray-500 rounded-md p-3 bg-base-100 flex-1/2">
-                                {!isClickedAge ?
+                                {!isClicked.age ?
                                     (<div>
                                         <div className="flex">
                                             <p className="text-lg font-bold max-w-fit">Age</p> 
-                                            <button className="cursor-pointer text-xs ml-3.5" onClick={()=>setIsClickedAge(true)}>
+                                            <button className="cursor-pointer text-xs ml-3.5" onClick={()=>handleToggle("age", true)}>
                                                 <FaEdit />
                                             </button>
                                         </div>
                                         
-                                        <p className="py-2 flex items-center gap-2"><FaCakeCandles /> {ageValue}</p>
+                                        <p className="py-2 flex items-center gap-2"><FaCakeCandles /> {formData.age}</p>
                                     </div>) :
                                     (<div>
                                         <form onSubmit={handleAge}>
@@ -452,8 +495,8 @@ const Profile = () => {
                                             <fieldset className="flex items-center gap-2">
                                                 <input className="input outline-0 h-7 mt-1.5 w-20 bg-base-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                     type="number"
-                                                    defaultValue={ageValue} 
-                                                    onChange={(e)=>{setAgeValue(e.target.value)}}/>
+                                                    defaultValue={formData.age} 
+                                                    onChange={(e)=>{handleChange("age", e.target.value)}}/>
                                                     <p className="text-rose-400">{errorMessageAge}</p>
                                             </fieldset>
                                         </form>

@@ -3,6 +3,11 @@ import { BASE_URL } from "./constants";
 
 export const fetchUserData = async ()=>{
     const user = await axios.get(`${BASE_URL}profile/view`, {
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        },
         withCredentials: true,
     });
     return user.data?.data;
