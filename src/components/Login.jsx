@@ -58,7 +58,9 @@ const Login = () => {
                 try{
                     const fetchedData = await fetchUserData();
                     dispatch(addUser(fetchedData));
-                    navigate("/")
+                    if(user) { 
+                        navigate("/");
+                    }
                 } catch (err){
                     const {status, statusText, data} = err?.response
                     if(status === 401) return;

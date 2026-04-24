@@ -17,8 +17,8 @@ const NavBar = ({setDrawerType}) => {
             dispatch(removeAllRequests());
             dispatch(clearConnection());
             dispatch(clearFeed());
-            navigate("/login");
             await fetchLogout();
+            navigate("/login");
         } catch (err) {
             const {status, statusText, data} = err?.response
             return navigate("/*", {state: {status, statusText, data}});
