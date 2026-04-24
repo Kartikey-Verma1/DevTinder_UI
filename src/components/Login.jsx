@@ -53,21 +53,6 @@ const Login = () => {
         if(user){
             navigate("/");
         }
-        else {
-            (async function(){
-                try{
-                    const fetchedData = await fetchUserData();
-                    dispatch(addUser(fetchedData));
-                    if(user) { 
-                        navigate("/");
-                    }
-                } catch (err){
-                    const {status, statusText, data} = err?.response
-                    if(status === 401) return;
-                    else return navigate("/*", {state: {status, statusText, data}});
-                }
-            })();
-        }
     },[]);
     return (
         <div className="min-h-fit min-w-full">
